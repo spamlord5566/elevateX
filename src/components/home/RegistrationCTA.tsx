@@ -3,15 +3,16 @@
 import { m } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { ChevronRight, Star, Clock, MapPin } from 'lucide-react';
+import styles from './RegistrationCTA.module.css';
 
 interface RegistrationCTAProps {
   onRegisterClick: () => void;
 }
 
 const perks = [
-  { icon: <Star className="w-4 h-4" />, text: 'Mentorship from industry leaders' },
-  { icon: <Clock className="w-4 h-4" />, text: '36 hours of non-stop hacking' },
-  { icon: <MapPin className="w-4 h-4" />, text: 'Venue + meals provided' },
+  { icon: <Star size={16} />, text: 'Mentorship from industry leaders' },
+  { icon: <Clock size={16} />, text: '36 hours of non-stop hacking' },
+  { icon: <MapPin size={16} />, text: 'Venue + meals provided' },
 ];
 
 /**
@@ -23,54 +24,48 @@ export default function RegistrationCTA({ onRegisterClick }: RegistrationCTAProp
     <section
       id="register"
       aria-labelledby="cta-heading"
-      className="relative py-24 px-6 overflow-hidden"
+      className={styles.section}
     >
       {/* Animated gradient background */}
       <div
         aria-hidden="true"
-        className="absolute inset-0"
-        style={{
-          background:
-            'linear-gradient(135deg, rgba(212,240,0,0.06) 0%, transparent 40%, rgba(212,240,0,0.04) 100%)',
-        }}
+        className={styles.background}
       />
       <div
         aria-hidden="true"
-        className="absolute -top-32 -left-32 w-96 h-96 rounded-full blur-3xl opacity-10"
-        style={{ background: 'var(--color-brand-yellow)' }}
+        className={`${styles.orb} ${styles.orbTop}`}
       />
       <div
         aria-hidden="true"
-        className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full blur-3xl opacity-10"
-        style={{ background: 'var(--color-brand-yellow)' }}
+        className={`${styles.orb} ${styles.orbBottom}`}
       />
 
-      <div className="container-section relative z-10">
+      <div className={`container-section ${styles.inner}`}>
         <m.div
           initial={{ opacity: 0, scale: 0.97 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="glass-card border border-[var(--color-brand-yellow)]/25 p-10 md:p-16 text-center max-w-3xl mx-auto"
+          className={`glass-card ${styles.card}`}
         >
           {/* Countdown-style badge */}
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-[var(--color-brand-yellow)] border border-[var(--color-brand-yellow)]/30 mb-6">
-            <span className="w-2 h-2 rounded-full bg-[var(--color-brand-yellow)] animate-pulse" />
+          <span className={styles.badge}>
+            <span className={styles.dot} />
             Registrations close Sept 1, 2025
           </span>
 
           <h2
             id="cta-heading"
-            className="heading-lg text-[var(--color-text-primary)] mb-4"
+            className={`heading-lg ${styles.heading}`}
           >
             Ready to{' '}
-            <span className="text-[var(--color-brand-yellow)] text-glow">
+            <span className={`text-glow ${styles.accent}`}>
               Elevate
             </span>{' '}
             Your Game?
           </h2>
 
-          <p className="text-[var(--color-text-muted)] mb-8 leading-relaxed max-w-xl mx-auto">
+          <p className={styles.copy}>
             Join 2,000+ innovators from across India. Build the future in 36
             hours, win life-changing prizes, and make connections that last a
             lifetime.
@@ -78,15 +73,15 @@ export default function RegistrationCTA({ onRegisterClick }: RegistrationCTAProp
 
           {/* Perks */}
           <ul
-            className="flex flex-col sm:flex-row justify-center gap-4 mb-10"
+            className={styles.perks}
             aria-label="Registration perks"
           >
             {perks.map((perk) => (
               <li
                 key={perk.text}
-                className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]"
+                className={styles.perk}
               >
-                <span className="text-[var(--color-brand-yellow)]" aria-hidden="true">
+                <span className={styles.perkIcon} aria-hidden="true">
                   {perk.icon}
                 </span>
                 {perk.text}
@@ -99,15 +94,15 @@ export default function RegistrationCTA({ onRegisterClick }: RegistrationCTAProp
             size="lg"
             variant="primary"
             onClick={onRegisterClick}
-            rightIcon={<ChevronRight className="w-5 h-5" />}
+            rightIcon={<ChevronRight size={20} />}
             id="cta-register-btn"
             aria-label="Open registration wizard"
-            className="text-lg px-10"
+            className={styles.ctaButton}
           >
             Register Your Team
           </Button>
 
-          <p className="text-xs text-[var(--color-text-muted)]/60 mt-4">
+          <p className={styles.buttonNote}>
             Free to participate · No entry fee
           </p>
         </m.div>

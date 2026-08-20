@@ -4,15 +4,16 @@ import { m } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { ChevronRight, Zap, Users, Trophy } from 'lucide-react';
 import Image from 'next/image';
+import styles from './Hero.module.css';
 
 interface HeroProps {
   onRegisterClick: () => void;
 }
 
 const stats = [
-  { icon: <Users className="w-5 h-5" />, value: '2,000+', label: 'Participants' },
-  { icon: <Trophy className="w-5 h-5" />, value: '₹4,50,000', label: 'Prize Pool' },
-  { icon: <Zap className="w-5 h-5" />, value: '36 hrs', label: 'of Hacking' },
+  { icon: <Users size={20} />, value: '2,000+', label: 'Participants' },
+  { icon: <Trophy size={20} />, value: '₹4,50,000', label: 'Prize Pool' },
+  { icon: <Zap size={20} />, value: '36 hrs', label: 'Duration' },
 ];
 
 const containerVariants = {
@@ -40,22 +41,16 @@ export default function Hero({ onRegisterClick }: HeroProps) {
   return (
     <section
       id="hero"
-      aria-label="ElevateX 2.0 — Main Introduction"
-      className="relative min-h-dvh flex flex-col items-center justify-center text-center px-6 pt-24 pb-16 overflow-hidden"
+      aria-label="ElevateX — Main Introduction"
+      className={styles.hero}
     >
       {/* Radial glow behind headline */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        className={styles.glowLayer}
       >
         <div
-          style={{
-            width: '700px',
-            height: '700px',
-            background:
-              'radial-gradient(circle, rgba(212,240,0,0.08) 0%, rgba(212,240,0,0.03) 40%, transparent 70%)',
-            borderRadius: '50%',
-          }}
+          className={styles.glow}
         />
       </div>
 
@@ -63,43 +58,36 @@ export default function Hero({ onRegisterClick }: HeroProps) {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative z-10 flex flex-col items-center max-w-4xl mx-auto gap-6"
+        className={styles.content}
       >
         {/* Badge */}
         <m.div variants={itemVariants}>
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase glass-card border border-[var(--color-brand-yellow)]/30 text-[var(--color-brand-yellow)]">
-            <span className="w-2 h-2 rounded-full bg-[var(--color-brand-yellow)] animate-pulse" />
-            Registration Open — Sept 2025
+          <span className={`${styles.badge} glass-card`}>
+            <span className={styles.pulseDot} />
+            Registration Open — Sept 2026
           </span>
         </m.div>
 
         {/* Logo / Brand Name */}
-        <m.div variants={itemVariants} className="flex flex-col items-center gap-2">
-          <div className="relative">
+        <m.div variants={itemVariants} className={styles.brandWrap}>
+          <div className={styles.brand}>
             {/* Large stylized brand text */}
-            <h1 className="heading-xl text-[var(--color-text-primary)] tracking-tight">
+            <h1 className="heading-xl">
               ELEVATE
-              <span className="text-glow" style={{ color: 'var(--color-brand-yellow)' }}>
+              <span className={`text-glow ${styles.brandAccent}`}>
                 X
               </span>
             </h1>
-            {/* Version badge */}
-            <span
-              className="absolute -top-2 -right-10 text-xs font-bold text-[var(--color-brand-black)] bg-[var(--color-brand-yellow)] px-2 py-0.5 rounded-md"
-              aria-label="Version 2.0"
-            >
-              2.0
-            </span>
           </div>
         </m.div>
 
         {/* Tagline */}
         <m.p
           variants={itemVariants}
-          className="text-lg md:text-2xl font-medium tracking-widest uppercase text-[var(--color-text-muted)]"
+          className={styles.tagline}
         >
           Prepared to be{' '}
-          <span className="text-[var(--color-brand-yellow)] font-bold">
+          <span className={styles.taglineAccent}>
             Amazed
           </span>
         </m.p>
@@ -107,7 +95,7 @@ export default function Hero({ onRegisterClick }: HeroProps) {
         {/* Sub-copy */}
         <m.p
           variants={itemVariants}
-          className="text-base md:text-lg text-[var(--color-text-muted)] max-w-2xl leading-relaxed"
+          className={styles.subcopy}
         >
           India&apos;s most electrifying hackathon returns. 36 hours of raw
           innovation, real challenges, and life-changing prizes. Show the world
@@ -117,13 +105,13 @@ export default function Hero({ onRegisterClick }: HeroProps) {
         {/* CTAs */}
         <m.div
           variants={itemVariants}
-          className="flex flex-col sm:flex-row gap-4 mt-2"
+          className={styles.actions}
         >
           <Button
             size="lg"
             variant="primary"
             onClick={onRegisterClick}
-            rightIcon={<ChevronRight className="w-5 h-5" />}
+            rightIcon={<ChevronRight size={20} />}
             id="hero-register-btn"
             aria-label="Open registration wizard"
           >
@@ -146,37 +134,25 @@ export default function Hero({ onRegisterClick }: HeroProps) {
         {/* Stat strip */}
         <m.div
           variants={itemVariants}
-          className="flex flex-wrap justify-center gap-6 sm:gap-10 mt-8 w-full max-w-lg"
+          className={styles.stats}
         >
           {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center gap-1.5">
-              <div className="flex items-center gap-1.5 text-[var(--color-brand-yellow)]">
+            <div key={stat.label} className={styles.stat}>
+              <span className={styles.statLabel}>
+                {stat.label}
+              </span>
+              <div className={styles.statValue}>
                 {stat.icon}
-                <span className="text-xl md:text-2xl font-bold font-display">
+                <span>
                   {stat.value}
                 </span>
               </div>
-              <span className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest">
-                {stat.label}
-              </span>
             </div>
           ))}
         </m.div>
       </m.div>
 
-      {/* Scroll indicator */}
-      <m.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        aria-hidden="true"
-      >
-        <span className="text-xs text-[var(--color-text-muted)] tracking-widest uppercase">
-          Scroll
-        </span>
-        <div className="w-px h-12 bg-gradient-to-b from-[var(--color-brand-yellow)]/60 to-transparent" />
-      </m.div>
+
     </section>
   );
 }

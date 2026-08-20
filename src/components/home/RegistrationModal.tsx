@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/Input';
 import { useToast } from '@/components/ui/Toast';
 import { registerTeam, type RegistrationPayload } from '@/lib/api';
 import clsx from 'clsx';
+import styles from './RegistrationModal.module.css';
 
 // ─── Validation Schemas ───────────────────────────────────
 
@@ -62,28 +63,25 @@ const STEPS = ['Team Info', 'Leader', 'Members', 'Review'];
 
 function StepIndicator({ currentStep }: { currentStep: number }) {
   return (
-    <div className="flex items-center justify-center gap-0 mb-10" role="list" aria-label="Registration steps">
+    <div className={styles.stepper} role="list" aria-label="Registration steps">
       {STEPS.map((step, i) => (
-        <div key={step} className="flex items-center" role="listitem">
-          <div className="flex flex-col items-center gap-1.5">
+        <div key={step} className={styles.stepItem} role="listitem">
+          <div className={styles.step}>
             <div
               className={clsx(
-                'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300',
+                styles.stepCircle,
                 i < currentStep
-                  ? 'bg-[var(--color-brand-yellow)] text-[var(--color-brand-black)]'
+                  ? styles.stepCircleComplete
                   : i === currentStep
-                    ? 'bg-[var(--color-brand-yellow)] text-[var(--color-brand-black)] ring-4 ring-[var(--color-brand-yellow)]/30'
-                    : 'bg-[var(--color-surface-3)] text-[var(--color-text-muted)]',
+                    ? styles.stepCircleActive
+                    : undefined,
               )}
               aria-current={i === currentStep ? 'step' : undefined}
             >
-              {i < currentStep ? <CheckCircle className="w-4 h-4" /> : i + 1}
+              {i < currentStep ? <CheckCircle size={16} /> : i + 1}
             </div>
             <span
-              className={clsx(
-                'text-[10px] tracking-wide hidden sm:block',
-                i === currentStep ? 'text-[var(--color-brand-yellow)]' : 'text-[var(--color-text-muted)]',
-              )}
+              className={clsx(styles.stepName, i === currentStep && styles.stepNameActive)}
             >
               {step}
             </span>
@@ -91,10 +89,8 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
           {i < STEPS.length - 1 && (
             <div
               className={clsx(
-                'w-12 sm:w-16 h-px mx-2 transition-all duration-300 mb-4',
-                i < currentStep
-                  ? 'bg-[var(--color-brand-yellow)]'
-                  : 'bg-[var(--color-surface-3)]',
+                styles.connector,
+                i < currentStep && styles.connectorComplete,
               )}
               aria-hidden="true"
             />
@@ -117,7 +113,7 @@ function Step1({
   onChange: (field: keyof FormData, value: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className={styles.formStep}>
       <Input
         id="teamName"
         label="Team Name"
@@ -128,10 +124,10 @@ function Step1({
         autoFocus
         maxLength={50}
       />
-      <div className="flex flex-col gap-1.5">
+      <div className={styles.trackField}>
         <label
           htmlFor="trackId"
-          className="text-sm font-medium text-[var(--color-text-primary)]"
+          className={styles.fieldLabel}
         >
           Select Track
         </label>
@@ -140,15 +136,7 @@ function Step1({
           value={data.trackId}
           onChange={(e) => onChange('trackId', e.target.value)}
           aria-invalid={!!errors.trackId}
-          className={clsx(
-            'w-full px-4 py-3 rounded-xl text-sm',
-            'bg-[var(--color-surface-2)] text-[var(--color-text-primary)]',
-            'border transition-all duration-150',
-            'focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-yellow)] focus:border-transparent',
-            errors.trackId
-              ? 'border-red-500'
-              : 'border-[var(--color-glass-border)]',
-          )}
+          className={clsx(styles.select, errors.trackId && styles.selectError)}
         >
           <option value="">— Choose your track —</option>
           {TRACKS.map((t) => (
@@ -158,7 +146,7 @@ function Step1({
           ))}
         </select>
         {errors.trackId && (
-          <p role="alert" className="text-xs text-red-400">
+          <p role="alert" className={styles.error}>
             ⚠ {errors.trackId}
           </p>
         )}
@@ -179,7 +167,7 @@ function Step2({
   onChange: (field: keyof FormData, value: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className={styles.formStep}>
       <Input
         id="leaderName"
         label="Team Leader Name"
@@ -219,28 +207,28 @@ function Step3({
   onRemoveMember: (index: number) => void;
 }) {
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-sm text-[var(--color-text-muted)]">
+    <div className={styles.formStep}>
+      <p className={styles.helper}>
         Add up to 3 additional team members (you are already set as leader).
       </p>
 
       {data.members.map((member, i) => (
         <div
           key={i}
-          className="glass-card p-5 sm:p-6 flex flex-col gap-5 relative"
+          className={styles.memberCard}
           aria-label={`Team member ${i + 1}`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[var(--color-brand-yellow)] uppercase tracking-wide">
+          <div className={styles.memberHeader}>
+            <span className={styles.memberLabel}>
               Member {i + 1}
             </span>
             <button
               type="button"
               onClick={() => onRemoveMember(i)}
               aria-label={`Remove member ${i + 1}`}
-              className="p-1.5 rounded-lg text-[var(--color-text-muted)] hover:text-red-400 hover:bg-red-400/10 transition-all"
+              className={styles.removeButton}
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 size={16} />
             </button>
           </div>
           <Input
@@ -267,10 +255,10 @@ function Step3({
         <button
           type="button"
           onClick={onAddMember}
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-dashed border-[var(--color-glass-border)] text-sm text-[var(--color-text-muted)] hover:border-[var(--color-brand-yellow)]/50 hover:text-[var(--color-brand-yellow)] transition-all"
+          className={styles.addMember}
           aria-label="Add another team member"
         >
-          <Plus className="w-4 h-4" />
+          <Plus size={16} />
           Add Member ({data.members.length}/3)
         </button>
       )}
@@ -284,25 +272,25 @@ function Step4({ data }: { data: FormData }) {
   const trackName = TRACKS.find((t) => t.id === data.trackId)?.name ?? data.trackId;
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="glass-card p-6 flex flex-col gap-4">
+    <div className={styles.reviewStep}>
+      <div className={styles.reviewCard}>
         <Row label="Team Name" value={data.teamName} />
         <Row label="Track" value={trackName} />
         <Row label="Leader" value={`${data.leaderName} (${data.leaderEmail})`} />
         {data.members.length > 0 && (
-          <div className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
+          <div className={styles.membersList}>
+            <span className={styles.reviewLabel}>
               Members
             </span>
             {data.members.map((m, i) => (
-              <span key={i} className="text-sm text-[var(--color-text-primary)]">
+              <span key={i} className={styles.memberValue}>
                 {m.name} ({m.email})
               </span>
             ))}
           </div>
         )}
       </div>
-      <p className="text-xs text-[var(--color-text-muted)] text-center">
+      <p className={styles.consent}>
         By submitting, you agree to the ElevateX Code of Conduct.
       </p>
     </div>
@@ -311,11 +299,11 @@ function Step4({ data }: { data: FormData }) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
+    <div className={styles.reviewRow}>
+      <span className={styles.reviewLabel}>
         {label}
       </span>
-      <span className="text-sm text-[var(--color-text-primary)]">{value}</span>
+      <span className={styles.reviewValue}>{value}</span>
     </div>
   );
 }
@@ -471,12 +459,11 @@ export default function RegistrationModal({
   return (
     /* Backdrop */
     <div
-      className="fixed inset-0 z-[9990] flex items-center justify-center p-4"
+      className={styles.backdrop}
       role="presentation"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
     >
       {/* Dialog */}
       <div
@@ -486,35 +473,34 @@ export default function RegistrationModal({
         aria-labelledby="modal-title"
         tabIndex={-1}
         onKeyDown={handleKeyDown}
-        className="relative w-full max-w-lg glass-card border border-[var(--color-brand-yellow)]/25 p-6 sm:p-8 max-h-[90dvh] overflow-y-auto focus:outline-none"
+        className={styles.dialog}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className={styles.header}>
           <div>
             <h2
               id="modal-title"
-              className="text-xl font-bold text-[var(--color-text-primary)]"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className={styles.title}
             >
               Register Your Team
             </h2>
-            <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+            <p className={styles.stepLabel}>
               Step {step + 1} of {STEPS.length} — {STEPS[step]}
             </p>
           </div>
           <button
             onClick={onClose}
             aria-label="Close registration modal"
-            className="p-2 rounded-xl text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] hover:bg-[var(--color-glass)] transition-all"
+            className={styles.iconButton}
           >
-            <X className="w-5 h-5" />
+            <X size={20} />
           </button>
         </div>
 
         <StepIndicator currentStep={step} />
 
         {/* Step Content */}
-        <div className="flex-1">
+        <div className={styles.stepContent}>
           {step === 0 && (
             <Step1 data={formData} errors={errors} onChange={handleFieldChange} />
           )}
@@ -534,13 +520,13 @@ export default function RegistrationModal({
         </div>
 
         {/* Footer Buttons */}
-        <div className="flex flex-wrap items-center justify-between mt-10 gap-4">
+        <div className={styles.footer}>
           {step > 0 ? (
             <Button
               variant="ghost"
               size="sm"
               onClick={handleBack}
-              leftIcon={<ChevronLeft className="w-4 h-4" />}
+              leftIcon={<ChevronLeft size={16} />}
               disabled={mutation.isPending}
             >
               Back
@@ -554,7 +540,7 @@ export default function RegistrationModal({
               variant="primary"
               size="sm"
               onClick={handleNext}
-              rightIcon={<ChevronRight className="w-4 h-4" />}
+              rightIcon={<ChevronRight size={16} />}
             >
               Continue
             </Button>
@@ -564,7 +550,7 @@ export default function RegistrationModal({
               size="sm"
               onClick={handleSubmit}
               isLoading={mutation.isPending}
-              rightIcon={!mutation.isPending ? <CheckCircle className="w-4 h-4" /> : undefined}
+              rightIcon={!mutation.isPending ? <CheckCircle size={16} /> : undefined}
             >
               {mutation.isPending ? 'Registering…' : 'Submit Registration'}
             </Button>

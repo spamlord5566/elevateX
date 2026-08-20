@@ -1,0 +1,244 @@
+.section {
+  position: relative;
+  padding: var(--space-12) var(--space-6);
+}
+
+.header {
+  margin-bottom: var(--space-12);
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: var(--space-4);
+  padding: 6px var(--space-4);
+  border: 1px solid rgb(212 240 0 / 30%);
+  border-radius: var(--radius-pill);
+  color: var(--color-brand-yellow);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.heading {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-primary);
+}
+
+.headingAccent {
+  color: var(--color-brand-yellow);
+}
+
+.description {
+  max-width: 36rem;
+  margin-inline: auto;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: var(--text-body-line-height);
+}
+
+.loadingState {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-10);
+}
+
+.errorState {
+  max-width: 28rem;
+  margin-inline: auto;
+  padding: var(--space-8);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  color: #f87171;
+  text-align: center;
+}
+
+.errorTitle {
+  font-weight: 600;
+}
+
+.errorMessage {
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.trackGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-6);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: var(--space-6);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-glass);
+  box-shadow: var(--shadow-card);
+  cursor: default;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.card:hover .title {
+  color: var(--color-brand-yellow);
+}
+
+.accent {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+}
+
+.glow {
+  position: absolute;
+  top: -3rem;
+  right: -3rem;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  filter: blur(2rem);
+  transition: opacity 500ms ease;
+}
+
+.card:hover .glow {
+  opacity: 0.2;
+}
+
+.content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.icon {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radius-md);
+  font-size: 1.875rem;
+}
+
+.copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.title {
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: var(--text-heading-line-height);
+  transition: color 200ms ease;
+}
+
+.cardDescription {
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: 4px;
+}
+
+.tag {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding: var(--space-4) 4px 0;
+  border-top: 1px solid var(--color-glass-border);
+}
+
+.teamInfo,
+.prize {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.75rem;
+}
+
+.teamInfo {
+  flex: 1 1 auto;
+  color: var(--color-text-muted);
+}
+
+.teamInfo span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.prize {
+  flex: 0 1 auto;
+  color: var(--color-brand-yellow);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+@media (max-width: 1000px) {
+  .trackGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .section {
+    padding-inline: var(--space-4);
+  }
+
+  .trackGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .card {
+    padding: var(--space-5);
+  }
+
+  .footer {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .teamInfo,
+  .prize {
+    flex-basis: auto;
+  }
+}

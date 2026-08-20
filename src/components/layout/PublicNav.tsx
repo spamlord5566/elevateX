@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Menu, X, Zap } from 'lucide-react';
 import clsx from 'clsx';
+import styles from './PublicNav.module.css';
 
 interface PublicNavProps {
   onRegisterClick: () => void;
@@ -71,39 +72,33 @@ export default function PublicNav({ onRegisterClick }: PublicNavProps) {
       <nav
         aria-label="Main navigation"
         className={clsx(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-          isScrolled
-            ? 'bg-[var(--color-brand-black)]/90 backdrop-blur-xl border-b border-[var(--color-glass-border)]'
-            : 'bg-transparent',
+          styles.nav,
+          isScrolled && styles.scrolled,
         )}
       >
         <div className="container-section">
-          <div className="flex items-center justify-between h-16 md:h-20">
+          <div className={styles.row}>
             {/* Brand Logo */}
             <Link
               href="/"
-              className="flex items-center gap-2 group focus-visible:ring-2 focus-visible:ring-[var(--color-brand-yellow)] rounded-lg p-1"
+              className={styles.brandLink}
               aria-label="ElevateX home"
             >
               <Zap
-                className="w-6 h-6 text-[var(--color-brand-yellow)] group-hover:scale-110 transition-transform"
+                className={styles.brandIcon}
                 aria-hidden="true"
               />
               <span
-                className="text-xl font-black tracking-tight text-[var(--color-text-primary)]"
-                style={{ fontFamily: 'var(--font-display)' }}
+                className={styles.brand}
               >
                 ELEVATE
-                <span style={{ color: 'var(--color-brand-yellow)' }}>X</span>
-              </span>
-              <span className="hidden sm:inline text-xs font-bold bg-[var(--color-brand-yellow)] text-[var(--color-brand-black)] px-1.5 py-0.5 rounded leading-none">
-                2.0
+                <span className={styles.wordmarkX}>X</span>
               </span>
             </Link>
 
             {/* Desktop Nav Links */}
             <ul
-              className="hidden md:flex items-center gap-1"
+              className={styles.links}
               role="list"
               aria-label="Navigation links"
             >
@@ -112,7 +107,7 @@ export default function PublicNav({ onRegisterClick }: PublicNavProps) {
                   <li key={link.label}>
                     <button
                       onClick={() => scrollToSection(link.href)}
-                      className="px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] hover:bg-[var(--color-glass)] transition-all duration-150"
+                      className={styles.link}
                     >
                       {link.label}
                     </button>
@@ -121,7 +116,7 @@ export default function PublicNav({ onRegisterClick }: PublicNavProps) {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] hover:bg-[var(--color-glass)] transition-all duration-150"
+                      className={styles.link}
                     >
                       {link.label}
                     </Link>
@@ -131,7 +126,7 @@ export default function PublicNav({ onRegisterClick }: PublicNavProps) {
             </ul>
 
             {/* Desktop CTA */}
-            <div className="hidden md:flex items-center">
+            <div className={styles.desktopCta}>
               <Button
                 variant="primary"
                 size="sm"
@@ -149,9 +144,9 @@ export default function PublicNav({ onRegisterClick }: PublicNavProps) {
               aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
-              className="md:hidden p-2 rounded-xl text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] hover:bg-[var(--color-glass)] transition-all"
+              className={styles.menuButton}
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
@@ -160,10 +155,9 @@ export default function PublicNav({ onRegisterClick }: PublicNavProps) {
       {/* Mobile Slide-Over Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 md:hidden"
+          className={styles.overlay}
           aria-hidden="true"
           onClick={() => setIsOpen(false)}
-          style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
         />
       )}
 
@@ -175,31 +169,28 @@ export default function PublicNav({ onRegisterClick }: PublicNavProps) {
         aria-modal="true"
         aria-label="Mobile navigation menu"
         className={clsx(
-          'fixed top-0 right-0 bottom-0 z-50 w-72 md:hidden',
-          'flex flex-col pt-20 pb-8 px-6',
-          'bg-[var(--color-surface-1)] border-l border-[var(--color-glass-border)]',
-          'transition-transform duration-300 ease-out',
-          isOpen ? 'translate-x-0' : 'translate-x-full',
+          styles.mobileMenu,
+          !isOpen && styles.mobileMenuClosed,
         )}
       >
         {/* Close button inside panel */}
         <button
           onClick={() => setIsOpen(false)}
           aria-label="Close menu"
-          className="absolute top-4 right-4 p-2 rounded-xl text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] hover:bg-[var(--color-glass)] transition-all"
+          className={styles.closeButton}
         >
-          <X className="w-5 h-5" />
+            <X size={20} />
         </button>
 
         {/* Links */}
         <nav aria-label="Mobile navigation links">
-          <ul className="flex flex-col gap-1 mb-8" role="list">
+          <ul className={styles.mobileLinks} role="list">
             {navLinks.map((link) => (
               <li key={link.label}>
                 {link.href.startsWith('#') ? (
                   <button
                     onClick={() => scrollToSection(link.href)}
-                    className="w-full text-left px-4 py-3 rounded-xl text-base font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] hover:bg-[var(--color-glass)] transition-all"
+                    className={styles.mobileLink}
                   >
                     {link.label}
                   </button>
@@ -207,7 +198,7 @@ export default function PublicNav({ onRegisterClick }: PublicNavProps) {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="block px-4 py-3 rounded-xl text-base font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] hover:bg-[var(--color-glass)] transition-all"
+                    className={styles.mobileLink}
                   >
                     {link.label}
                   </Link>
@@ -225,7 +216,7 @@ export default function PublicNav({ onRegisterClick }: PublicNavProps) {
             setIsOpen(false);
             onRegisterClick();
           }}
-          className="w-full"
+          className={styles.fullWidth}
           id="mobile-register-btn"
         >
           Register Now

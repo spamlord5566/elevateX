@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { type HTMLAttributes } from 'react';
+import styles from './LoadingSpinner.module.css';
 
 interface LoadingSpinnerProps extends HTMLAttributes<HTMLDivElement> {
   /** Size variant */
@@ -9,12 +10,6 @@ interface LoadingSpinnerProps extends HTMLAttributes<HTMLDivElement> {
   /** Accessible label */
   label?: string;
 }
-
-const sizeMap = {
-  sm: 'w-5 h-5 border-2',
-  md: 'w-9 h-9 border-[3px]',
-  lg: 'w-14 h-14 border-4',
-};
 
 /**
  * Animated spinner with yellow brand accent.
@@ -30,22 +25,13 @@ export default function LoadingSpinner({
     <div
       role="status"
       aria-label={label}
-      className={clsx('flex items-center justify-center', className)}
+      className={clsx(styles.container, className)}
       {...rest}
     >
       <div
-        className={clsx(
-          'rounded-full border-transparent animate-spin',
-          sizeMap[size],
-        )}
-        style={{
-          borderTopColor: 'var(--color-brand-yellow)',
-          borderRightColor: 'rgba(212, 240, 0, 0.3)',
-          borderBottomColor: 'transparent',
-          borderLeftColor: 'rgba(212, 240, 0, 0.1)',
-        }}
+        className={clsx(styles.spinner, styles[size])}
       />
-      <span className="sr-only">{label}</span>
+      <span className={styles.srOnly}>{label}</span>
     </div>
   );
 }

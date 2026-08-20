@@ -8,6 +8,7 @@ import { Zap, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useToast } from '@/components/ui/Toast';
+import styles from './Login.module.css';
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -73,55 +74,50 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-dvh flex items-center justify-center px-6 py-16 relative">
+    <main className={styles.main}>
       {/* Background glow */}
       <div
         aria-hidden="true"
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse at 70% 30%, rgba(212,240,0,0.06) 0%, transparent 60%)',
-        }}
+        className={styles.background}
       />
 
-      <div className="relative z-10 w-full max-w-md">
+      <div className={styles.content}>
         {/* Brand */}
-        <div className="text-center mb-10">
+        <div className={styles.brandBlock}>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 group"
+            className={styles.brandLink}
             aria-label="Back to home"
           >
             <Zap
-              className="w-6 h-6 text-[var(--color-brand-yellow)] group-hover:scale-110 transition-transform"
+              className={styles.brandIcon}
               aria-hidden="true"
             />
             <span
-              className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className={styles.brand}
             >
               ELEVATE
-              <span style={{ color: 'var(--color-brand-yellow)' }}>X</span>
+              <span className={styles.wordmarkX}>X</span>
             </span>
           </Link>
-          <h1 className="text-3xl font-bold text-[var(--color-text-primary)] mt-6 mb-2">
+          <h1 className={styles.heading}>
             Welcome Back
           </h1>
-          <p className="text-sm text-[var(--color-text-muted)]">
+          <p className={styles.subtitle}>
             Sign in to your ElevateX account
           </p>
-          <p className="text-xs text-[var(--color-brand-yellow)]/70 mt-1">
+          <p className={styles.demo}>
             Demo: demo@elevatex.in / demo123
           </p>
         </div>
 
         {/* Card */}
-        <div className="glass-card border border-[var(--color-brand-yellow)]/20 p-8">
+        <div className={`glass-card ${styles.card}`}>
           <form
             onSubmit={handleSubmit}
             noValidate
             aria-label="Login form"
-            className="flex flex-col gap-5"
+            className={styles.form}
           >
             <Input
               id="login-email"
@@ -136,7 +132,7 @@ export default function LoginPage() {
             />
 
             {/* Password with toggle */}
-            <div className="relative">
+            <div className={styles.passwordField}>
               <Input
                 id="login-password"
                 label="Password"
@@ -151,21 +147,21 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
-                className="absolute right-3 bottom-3 p-1 text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] transition-colors"
+                className={styles.passwordToggle}
               >
                 {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
+                  <EyeOff size={16} />
                 ) : (
-                  <Eye className="w-4 h-4" />
+                  <Eye size={16} />
                 )}
               </button>
             </div>
 
             {/* Forgot password */}
-            <div className="flex justify-end -mt-2">
+            <div className={styles.forgot}>
               <a
                 href="#"
-                className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] transition-colors"
+                className={styles.link}
                 onClick={(e) => {
                   e.preventDefault();
                   addToast('Password reset link has been sent (demo).', 'info');
@@ -179,9 +175,9 @@ export default function LoginPage() {
               type="submit"
               variant="primary"
               size="md"
-              className="w-full mt-2"
+              className={styles.fullWidth}
               isLoading={mutation.isPending}
-              rightIcon={!mutation.isPending ? <ArrowRight className="w-4 h-4" /> : undefined}
+              rightIcon={!mutation.isPending ? <ArrowRight size={16} /> : undefined}
               id="login-submit-btn"
             >
               {mutation.isPending ? 'Signing in…' : 'Sign In'}
@@ -189,17 +185,17 @@ export default function LoginPage() {
           </form>
 
           {/* Divider */}
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-[var(--color-glass-border)]" />
-            <span className="text-xs text-[var(--color-text-muted)]">or</span>
-            <div className="flex-1 h-px bg-[var(--color-glass-border)]" />
+          <div className={styles.divider}>
+            <div className={styles.dividerLine} />
+            <span className={styles.dividerLabel}>or</span>
+            <div className={styles.dividerLine} />
           </div>
 
-          <p className="text-center text-sm text-[var(--color-text-muted)]">
+          <p className={styles.registerPrompt}>
             New to ElevateX?{' '}
             <Link
               href="/#register"
-              className="text-[var(--color-brand-yellow)] font-medium hover:underline"
+              className={styles.registerLink}
             >
               Register your team
             </Link>
@@ -207,10 +203,10 @@ export default function LoginPage() {
         </div>
 
         {/* Back */}
-        <div className="text-center mt-6">
+        <div className={styles.backBlock}>
           <Link
             href="/"
-            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] transition-colors"
+            className={styles.back}
           >
             ← Back to Home
           </Link>

@@ -11,6 +11,7 @@ import {
 } from 'react';
 import clsx from 'clsx';
 import { CheckCircle, XCircle, Info, AlertTriangle, X } from 'lucide-react';
+import styles from './Toast.module.css';
 
 // ─── Types ────────────────────────────────────────────────
 
@@ -40,17 +41,10 @@ export function useToast() {
 // ─── Icons map ────────────────────────────────────────────
 
 const iconMap: Record<ToastVariant, ReactNode> = {
-  success: <CheckCircle className="w-5 h-5 text-[var(--color-brand-yellow)]" />,
-  error: <XCircle className="w-5 h-5 text-red-400" />,
-  info: <Info className="w-5 h-5 text-blue-400" />,
-  warning: <AlertTriangle className="w-5 h-5 text-amber-400" />,
-};
-
-const borderMap: Record<ToastVariant, string> = {
-  success: 'border-[var(--color-brand-yellow)]/40',
-  error: 'border-red-500/40',
-  info: 'border-blue-500/40',
-  warning: 'border-amber-500/40',
+  success: <CheckCircle size={20} color="var(--color-brand-yellow)" />,
+  error: <XCircle size={20} color="#f87171" />,
+  info: <Info size={20} color="#60a5fa" />,
+  warning: <AlertTriangle size={20} color="#fbbf24" />,
 };
 
 // ─── Single Toast ─────────────────────────────────────────
@@ -83,35 +77,24 @@ function Toast({
     <div
       role="alert"
       aria-live="polite"
-      className={clsx(
-        'relative flex items-start gap-3 overflow-hidden',
-        'glass-card border px-4 py-3.5 min-w-[300px] max-w-[420px]',
-        'shadow-[0_8px_32px_rgba(0,0,0,0.5)]',
-        borderMap[item.variant],
-      )}
+      className={clsx(styles.toast, styles[item.variant])}
     >
-      <span className="mt-0.5 shrink-0">{iconMap[item.variant]}</span>
-      <p className="text-sm text-[var(--color-text-primary)] flex-1 leading-snug">
+      <span className={styles.icon}>{iconMap[item.variant]}</span>
+      <p className={styles.message}>
         {item.message}
       </p>
       <button
         onClick={() => onRemove(item.id)}
         aria-label="Dismiss notification"
-        className="shrink-0 p-0.5 rounded text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+        className={styles.dismiss}
       >
-        <X className="w-4 h-4" />
+        <X size={16} />
       </button>
       {/* Progress bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--color-surface-3)]">
+      <div className={styles.progressTrack}>
         <div
           ref={progressRef}
-          className={clsx(
-            'h-full w-full origin-left',
-            item.variant === 'success' && 'bg-[var(--color-brand-yellow)]',
-            item.variant === 'error' && 'bg-red-400',
-            item.variant === 'info' && 'bg-blue-400',
-            item.variant === 'warning' && 'bg-amber-400',
-          )}
+          className={clsx(styles.progress, styles[`progress${item.variant[0].toUpperCase()}${item.variant.slice(1)}`])}
         />
       </div>
     </div>
@@ -142,10 +125,10 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
       <div
         aria-live="polite"
         aria-label="Notifications"
-        className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"
+        className={styles.stack}
       >
         {toasts.map((t) => (
-          <div key={t.id} className="pointer-events-auto animate-in slide-in-from-right-4 fade-in duration-300">
+          <div key={t.id} className={styles.entry}>
             <Toast item={t} onRemove={removeToast} />
           </div>
         ))}

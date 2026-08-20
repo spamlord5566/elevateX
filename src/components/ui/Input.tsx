@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { forwardRef, type InputHTMLAttributes } from 'react';
+import styles from './Input.module.css';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -22,11 +23,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const hintId = hint ? `${inputId}-hint` : undefined;
 
   return (
-    <div className="flex flex-col gap-1.5 w-full">
+    <div className={styles.field}>
       {label && (
         <label
           htmlFor={inputId}
-          className="text-sm font-medium text-[var(--color-text-primary)]"
+          className={styles.label}
         >
           {label}
         </label>
@@ -37,25 +38,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         aria-describedby={[errorId, hintId].filter(Boolean).join(' ') || undefined}
         aria-invalid={!!error}
         className={clsx(
-          'w-full px-4 py-3 rounded-xl text-sm',
-          'bg-[var(--color-surface-2)] text-[var(--color-text-primary)]',
-          'border transition-all duration-150',
-          'placeholder:text-[var(--color-text-muted)]',
-          'focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-yellow)] focus:border-transparent',
-          error
-            ? 'border-red-500 focus:ring-red-500'
-            : 'border-[var(--color-glass-border)] hover:border-[var(--color-brand-yellow)]/50',
+          styles.input,
+          error && styles.errorInput,
           className,
         )}
         {...rest}
       />
       {hint && !error && (
-        <p id={hintId} className="text-xs text-[var(--color-text-muted)]">
+        <p id={hintId} className={styles.hint}>
           {hint}
         </p>
       )}
       {error && (
-        <p id={errorId} role="alert" className="text-xs text-red-400 flex items-center gap-1">
+        <p id={errorId} role="alert" className={styles.error}>
           <span aria-hidden="true">⚠</span> {error}
         </p>
       )}

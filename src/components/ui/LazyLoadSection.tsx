@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import styles from './LazyLoadSection.module.css';
 
 interface LazyLoadSectionProps {
   /** Content to lazily mount when in view */
@@ -57,7 +58,11 @@ export default function LazyLoadSection({
       {isMounted ? (
         children
       ) : (
-        <div style={{ minHeight: placeholderHeight }} aria-hidden="true" />
+        <div
+          aria-hidden="true"
+          style={{ '--placeholder-height': placeholderHeight } as CSSProperties}
+          className={styles.placeholder}
+        />
       )}
     </div>
   );

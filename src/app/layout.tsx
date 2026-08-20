@@ -6,13 +6,13 @@ import MotionProvider from '@/components/providers/MotionProvider';
 import ToastProvider from '@/components/ui/Toast';
 
 export const metadata: Metadata = {
-  title: 'ElevateX 2.0 — Prepared to Be Amazed',
+  title: 'ElevateX — Prepare to Be Amazed',
   description:
     "India's most electrifying hackathon returns. 36 hours of raw innovation, real challenges, and life-changing prizes. Register your team for ElevateX 2.0.",
   keywords: ['hackathon', 'ElevateX', 'India', 'coding competition', 'innovation'],
   authors: [{ name: 'ElevateX Team' }],
   openGraph: {
-    title: 'ElevateX 2.0 — Prepared to Be Amazed',
+    title: 'ElevateX — Prepare to Be Amazed',
     description: "India's most electrifying hackathon. 36 hours, ₹4,50,000 in prizes.",
     type: 'website',
     // TODO: Add og:image when real branding assets are available
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ElevateX 2.0',
+    title: 'ElevateX',
     description: "India's most electrifying hackathon.",
   },
   // TODO: Set canonical URL when deploying
@@ -46,7 +46,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={fontVariables} suppressHydrationWarning>
-      <body className="antialiased">
+      <body>
         <QueryProvider>
           <MotionProvider>
             <ToastProvider>

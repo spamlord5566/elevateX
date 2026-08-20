@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import styles from './SpaceDust.module.css';
 
 interface Particle {
   x: number;
@@ -124,8 +125,7 @@ export default function SpaceDust() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0"
-      style={{ opacity: 0.6 }}
+      className={styles.canvas}
     />
   );
 }

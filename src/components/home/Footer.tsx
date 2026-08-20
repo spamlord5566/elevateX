@@ -1,6 +1,7 @@
 'use client';
 
 import { Github, Instagram, Linkedin, Twitter, Zap } from 'lucide-react';
+import styles from './Footer.module.css';
 
 const navLinks = [
   { label: 'Home', href: '#hero' },
@@ -11,10 +12,10 @@ const navLinks = [
 ];
 
 const socialLinks = [
-  { label: 'Twitter / X', href: 'https://twitter.com', icon: <Twitter className="w-4 h-4" /> },
-  { label: 'Instagram', href: 'https://instagram.com', icon: <Instagram className="w-4 h-4" /> },
-  { label: 'LinkedIn', href: 'https://linkedin.com', icon: <Linkedin className="w-4 h-4" /> },
-  { label: 'GitHub', href: 'https://github.com', icon: <Github className="w-4 h-4" /> },
+  { label: 'Twitter / X', href: 'https://twitter.com', icon: <Twitter size={16} /> },
+  { label: 'Instagram', href: 'https://instagram.com', icon: <Instagram size={16} /> },
+  { label: 'LinkedIn', href: 'https://linkedin.com', icon: <Linkedin size={16} /> },
+  { label: 'GitHub', href: 'https://github.com', icon: <Github size={16} /> },
 ];
 
 /**
@@ -26,40 +27,32 @@ export default function Footer() {
   return (
     <footer
       role="contentinfo"
-      className="relative border-t border-[var(--color-glass-border)] py-16 px-6"
+      className={styles.footer}
     >
       {/* Subtle top glow */}
       <div
         aria-hidden="true"
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px"
-        style={{
-          background:
-            'linear-gradient(90deg, transparent, rgba(212,240,0,0.4), transparent)',
-        }}
+        className={styles.glow}
       />
 
       <div className="container-section">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+        <div className={styles.columns}>
           {/* Brand */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <Zap className="w-6 h-6 text-[var(--color-brand-yellow)]" aria-hidden="true" />
+          <div className={styles.brandColumn}>
+            <div className={styles.brandRow}>
+              <Zap size={24} className={styles.brandIcon} aria-hidden="true" />
               <span
-                className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]"
-                style={{ fontFamily: 'var(--font-display)' }}
+                className={styles.brand}
               >
                 ELEVATE
-                <span style={{ color: 'var(--color-brand-yellow)' }}>X</span>
-              </span>
-              <span className="text-xs font-bold bg-[var(--color-brand-yellow)] text-[var(--color-brand-black)] px-1.5 py-0.5 rounded">
-                2.0
+                <span className={styles.wordmarkX}>X</span>
               </span>
             </div>
-            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed max-w-xs">
+            <p className={styles.description}>
               India&apos;s premier hackathon experience. Prepared to be amazed.
             </p>
             {/* Social links */}
-            <div className="flex items-center gap-3" aria-label="Social media links">
+            <div className={styles.socials} aria-label="Social media links">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
@@ -67,7 +60,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-9 h-9 rounded-xl glass-card flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] hover:border-[var(--color-brand-yellow)]/40 transition-all duration-200"
+                  className={styles.social}
                 >
                   {social.icon}
                 </a>
@@ -77,15 +70,15 @@ export default function Footer() {
 
           {/* Quick Links */}
           <nav aria-label="Footer navigation">
-            <h3 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-widest mb-4">
+            <h3 className={styles.heading}>
               Quick Links
             </h3>
-            <ul className="flex flex-col gap-2.5" role="list">
+            <ul className={styles.list} role="list">
               {navLinks.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-yellow)] transition-colors duration-150"
+                    className={styles.link}
                     onClick={(e) => {
                       e.preventDefault();
                       document
@@ -102,14 +95,14 @@ export default function Footer() {
 
           {/* Contact / Info */}
           <div>
-            <h3 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-widest mb-4">
+            <h3 className={styles.heading}>
               Contact
             </h3>
-            <ul className="flex flex-col gap-2.5 text-sm text-[var(--color-text-muted)]" role="list">
+            <ul className={styles.list} role="list">
               <li>
                 <a
                   href="mailto:hello@elevatex.in"
-                  className="hover:text-[var(--color-brand-yellow)] transition-colors"
+                  className={styles.link}
                   aria-label="Email us at hello@elevatex.in"
                 >
                   hello@elevatex.in
@@ -122,13 +115,13 @@ export default function Footer() {
         </div>
 
         {/* Divider + Legal */}
-        <div className="border-t border-[var(--color-glass-border)] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--color-text-muted)]">
+        <div className={styles.legal}>
           <p>© {currentYear} ElevateX. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <a href="/privacy" className="hover:text-[var(--color-brand-yellow)] transition-colors">
+          <div className={styles.legalLinks}>
+            <a href="/privacy" className={styles.link}>
               Privacy Policy
             </a>
-            <a href="/terms" className="hover:text-[var(--color-brand-yellow)] transition-colors">
+            <a href="/terms" className={styles.link}>
               Terms of Service
             </a>
           </div>

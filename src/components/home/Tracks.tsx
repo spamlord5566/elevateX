@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchTracks, type Track } from '@/lib/api';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { Users, Trophy, Tag } from 'lucide-react';
+import styles from './Tracks.module.css';
 
 // ─── Animation Variants ───────────────────────────────────
 
@@ -34,27 +35,27 @@ function TrackCard({ track }: { track: Track }) {
       variants={cardVariants}
       whileHover={{ y: -6, scale: 1.015 }}
       transition={{ duration: 0.25 }}
-      className="glass-card group relative overflow-hidden flex flex-col p-6 sm:p-7 h-full cursor-default"
+      className={styles.card}
       aria-label={`Track: ${track.name}`}
     >
       {/* Coloured top-edge accent */}
       <div
-        className="absolute top-0 left-0 right-0 h-0.5"
+        className={styles.accent}
         style={{ background: `linear-gradient(90deg, ${track.color}, transparent)` }}
       />
 
       {/* Glow blob on hover */}
       <div
-        className="absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-2xl pointer-events-none"
+        className={styles.glow}
         style={{ background: track.color }}
         aria-hidden="true"
       />
 
       {/* Main Content Area */}
-      <div className="flex flex-col flex-1 gap-5">
+      <div className={styles.content}>
         {/* Icon */}
         <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0"
+          className={styles.icon}
           style={{ background: `${track.color}18` }}
           aria-hidden="true"
         >
@@ -62,31 +63,30 @@ function TrackCard({ track }: { track: Track }) {
       </div>
 
         {/* Content */}
-        <div className="flex flex-col gap-2.5">
+        <div className={styles.copy}>
           <h3
-            className="heading-md text-[var(--color-text-primary)] group-hover:text-[var(--color-brand-yellow)] transition-colors duration-200 leading-tight"
-            style={{ fontSize: '1.25rem' }}
+            className={styles.title}
           >
             {track.name}
           </h3>
-          <p className="text-sm text-[var(--color-text-muted)] leading-relaxed min-w-0">
+          <p className={styles.cardDescription}>
             {track.description}
           </p>
         </div>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-2 mt-1" aria-label="Technologies">
+        <div className={styles.tags} aria-label="Technologies">
         {track.tags.map((tag) => (
           <span
             key={tag}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
+            className={styles.tag}
             style={{
               background: `${track.color}14`,
               color: track.color,
               border: `1px solid ${track.color}30`,
             }}
           >
-            <Tag className="w-3 h-3" aria-hidden="true" />
+            <Tag size={12} aria-hidden="true" />
             {tag}
           </span>
         ))}
@@ -94,13 +94,13 @@ function TrackCard({ track }: { track: Track }) {
       </div>
 
       {/* Footer: team size + prize */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-5 mt-8 border-t border-[var(--color-glass-border)]">
-        <span className="flex items-center gap-2 text-xs text-[var(--color-text-muted)] min-w-0">
-          <Users className="w-4 h-4 shrink-0" aria-hidden="true" />
-          <span className="truncate">Up to {track.maxTeamSize} members</span>
+      <div className={styles.footer}>
+        <span className={styles.teamInfo}>
+          <Users size={16} aria-hidden="true" />
+          <span>Up to {track.maxTeamSize} members</span>
         </span>
-        <span className="flex items-center gap-1.5 text-[0.8rem] font-bold text-[var(--color-brand-yellow)] shrink-0">
-          <Trophy className="w-4 h-4 shrink-0" aria-hidden="true" />
+        <span className={styles.prize}>
+          <Trophy size={16} aria-hidden="true" />
           {track.prizePool}
         </span>
       </div>
@@ -129,24 +129,24 @@ export default function Tracks() {
     <section
       id="tracks"
       aria-labelledby="tracks-heading"
-      className="relative py-24 px-6"
+      className={styles.section}
     >
       <div className="container-section">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase text-[var(--color-brand-yellow)] border border-[var(--color-brand-yellow)]/30 mb-4">
+        <div className={styles.header}>
+          <span className={styles.eyebrow}>
             Choose Your Arena
           </span>
           <h2
             id="tracks-heading"
-            className="heading-lg text-[var(--color-text-primary)] mb-4"
+            className={`heading-lg ${styles.heading}`}
           >
             Hackathon{' '}
-            <span className="text-[var(--color-brand-yellow)] text-glow">
+            <span className={`text-glow ${styles.headingAccent}`}>
               Tracks
             </span>
           </h2>
-          <p className="text-[var(--color-text-muted)] max-w-xl mx-auto text-base leading-relaxed">
+          <p className={styles.description}>
             Six domains. Six opportunities to make history. Pick your track,
             assemble your team, and build something legendary.
           </p>
@@ -154,7 +154,7 @@ export default function Tracks() {
 
         {/* States */}
         {isLoading && (
-          <div className="flex justify-center py-20">
+          <div className={styles.loadingState}>
             <LoadingSpinner size="lg" label="Loading tracks…" />
           </div>
         )}
@@ -162,10 +162,10 @@ export default function Tracks() {
         {isError && (
           <div
             role="alert"
-            className="text-center py-16 text-red-400 glass-card max-w-md mx-auto p-8"
+            className={styles.errorState}
           >
-            <p className="font-semibold">Failed to load tracks</p>
-            <p className="text-sm text-[var(--color-text-muted)] mt-1">
+            <p className={styles.errorTitle}>Failed to load tracks</p>
+            <p className={styles.errorMessage}>
               {error instanceof Error ? error.message : 'Unknown error'}
             </p>
           </div>
@@ -177,7 +177,7 @@ export default function Tracks() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            className={styles.trackGrid}
           >
             {tracks.map((track) => (
               <TrackCard key={track.id} track={track} />
