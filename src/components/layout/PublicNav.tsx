@@ -15,8 +15,6 @@ const navLinks = [
   { label: 'Home', href: '#hero' },
   { label: 'Schedule', href: '#schedule' },
   { label: 'Tracks', href: '#tracks' },
-  { label: 'Leaderboard', href: '/dashboard' },
-  { label: 'Login', href: '/login' },
 ];
 
 /**
