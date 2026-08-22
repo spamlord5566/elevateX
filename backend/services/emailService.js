@@ -5,8 +5,8 @@ const nodemailer = require('nodemailer');
 const EMAIL_FROM = process.env.EMAIL_FROM || 'noreply@elevatex.in';
 const smtpHost = process.env.SMTP_HOST || process.env.EMAIL_HOST || 'smtp.gmail.com';
 const smtpPort = Number(process.env.SMTP_PORT || process.env.EMAIL_PORT || 587);
-const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
-const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASSWORD;
+const smtpUser = (process.env.SMTP_USER || process.env.EMAIL_USER || '').trim();
+const smtpPass = (process.env.SMTP_PASS || process.env.EMAIL_PASSWORD || '').trim();
 const smtpConfigured = Boolean(smtpHost && smtpUser && smtpPass);
 
 const transporter = smtpConfigured
@@ -42,20 +42,31 @@ const buildAttachment = (registration) => {
 
 const sendEmail = async ({ to, subject, text, html, attachments }) => {
   if (!transporter) {
-    console.log('[Email Stub] Would send mail:', { to, subject, text });
-    return true;
+    console.error('[EmailService] SMTP is not configured. Email was not sent.', {
+      to,
+      subject,
+      smtpHost,
+      smtpUser: smtpUser ? 'configured' : 'missing',
+      smtpPass: smtpPass ? 'configured' : 'missing',
+    });
+    return false;
   }
 
-  await transporter.sendMail({
-    from: EMAIL_FROM,
-    to: to.join(', '),
-    subject,
-    text,
-    html,
-    attachments,
-  });
+  try {
+    const info = await transporter.sendMail({
+      from: EMAIL_FROM,
+      to: to.join(', '),
+      subject,
+      text,
+      html,
+      attachments,
+    });
 
-  return true;
+    return Boolean(info && info.messageId);
+  } catch (error) {
+    console.error('[EmailService] Nodemailer sendMail failed:', error);
+    return false;
+  }
 };
 
 const sendVerificationEmail = async (registration) => {

@@ -68,7 +68,7 @@ Protect `/admin` with a password.
 For development, an example password is:
 
 ```text
-elevate@123
+<your-admin-password>
 ```
 
 **Never hardcode this password in frontend/client-side code.**
@@ -76,7 +76,7 @@ elevate@123
 Store it on the backend:
 
 ```env
-ADMIN_PASSWORD=elevate@123
+ADMIN_PASSWORD=<set-a-strong-secret-here>
 ```
 
 Change the production password before deployment.

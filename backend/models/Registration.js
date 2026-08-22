@@ -57,8 +57,6 @@ const registrationSchema = new mongoose.Schema({
     required: [true, 'Leader email is required'],
     trim: true,
     lowercase: true,
-    unique: true,
-    sparse: true,
     match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address']
   },
   leaderPhone: {
