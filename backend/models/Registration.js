@@ -14,6 +14,12 @@ const memberSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
     match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address']
+  },
+  phone: {
+    type: String,
+    required: [true, 'Member phone number is required'],
+    trim: true,
+    match: [/^[0-9+\s()-]{8,20}$/, 'Please enter a valid phone number']
   }
 }, { _id: false });
 
@@ -49,11 +55,17 @@ const registrationSchema = new mongoose.Schema({
   leaderEmail: {
     type: String,
     required: [true, 'Leader email is required'],
-    unique: true,
-    index: true,
     trim: true,
     lowercase: true,
+    unique: true,
+    sparse: true,
     match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address']
+  },
+  leaderPhone: {
+    type: String,
+    required: [true, 'Leader phone number is required'],
+    trim: true,
+    match: [/^[0-9+\s()-]{8,20}$/, 'Please enter a valid phone number']
   },
   members: {
     type: [memberSchema],
@@ -65,16 +77,76 @@ const registrationSchema = new mongoose.Schema({
       message: 'A team can have at most 3 additional members.'
     }
   },
+  participantCount: {
+    type: Number,
+    required: true,
+    min: [1, 'A team must have at least 1 participant'],
+    max: [4, 'A team cannot have more than 4 participants']
+  },
+  feePerParticipantAtRegistration: {
+    type: Number,
+    required: true,
+    min: [0, 'Fee cannot be negative']
+  },
+  totalRegistrationFee: {
+    type: Number,
+    required: true,
+    min: [0, 'Total fee cannot be negative']
+  },
+  paymentScreenshot: {
+    fileName: String,
+    originalName: String,
+    mimeType: String,
+    size: Number,
+    path: String,
+    url: String,
+    uploadedAt: Date
+  },
+  paymentAmountChecked: {
+    type: Number,
+    default: null
+  },
   verificationStatus: {
     type: String,
     enum: {
-      values: ['PENDING', 'VERIFIED'],
+      values: ['Pending Verification', 'Verified', 'Rejected'],
       message: '{VALUE} is not a valid verification status'
     },
-    default: 'PENDING'
+    default: 'Pending Verification'
+  },
+  rejectionReason: {
+    type: String,
+    default: null
+  },
+  verifiedAt: {
+    type: Date,
+    default: null
+  },
+  rejectedAt: {
+    type: Date,
+    default: null
+  },
+  verificationEmailSent: {
+    type: Boolean,
+    default: false
+  },
+  verificationEmailSentAt: {
+    type: Date,
+    default: null
+  },
+  rejectionEmailSent: {
+    type: Boolean,
+    default: false
+  },
+  rejectionEmailSentAt: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true
 });
+
+registrationSchema.index({ leaderEmail: 1 }, { unique: true, sparse: true });
+registrationSchema.index({ 'members.email': 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model('Registration', registrationSchema);

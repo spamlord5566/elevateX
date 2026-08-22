@@ -430,3 +430,66 @@
 .statusButton:hover {
   background: rgba(255, 255, 255, 0.05);
 }
+
+.feePanel {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.feeHeader h3 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.feeRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.feeRow label {
+  color: #a0a0a0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.feeControls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.amountBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reasonInput {
+  min-height: 90px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  resize: vertical;
+}
+
+.paymentImage {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255,255,255,0.02);
+}
+
+.badgeRejected {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}

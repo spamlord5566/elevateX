@@ -15,9 +15,23 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 
 // CORS configuration
-const allowedOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://your-frontend.vercel.app',
+  'https://www.yourdomain.com',
+  'http://192.168.1.9:3000'
+];
+
 app.use(cors({
-  origin: allowedOrigin,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (Postman, mobile apps, etc.)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200
 }));
 

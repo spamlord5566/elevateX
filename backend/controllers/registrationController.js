@@ -1,8 +1,11 @@
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const Registration = require('../models/Registration');
+const RegistrationFee = require('../models/RegistrationFee');
 const { activeSessions } = require('../middleware/authMiddleware');
+const { sendVerificationEmail, sendRejectionEmail } = require('../services/emailService');
 
-// Static Data matching the frontend's mockServer
 const TRACKS = [
   {
     id: 'ai-ml',
@@ -30,7 +33,7 @@ const TRACKS = [
     description: 'No boundaries, no limits. Solve any real-world problem using any technology stack. Creativity rewarded over conformity.',
     icon: '💡',
     color: '#fb923c',
-    maxTeamSize: 5,
+    maxTeamSize: 4,
     prizePool: '₹60,000',
     tags: ['Any Stack', 'IoT', 'AR/VR', 'Robotics'],
   },
@@ -67,46 +70,10 @@ const TRACKS = [
 ];
 
 const GUIDELINES = [
-  {
-    id: 'eligibility',
-    title: 'Eligibility',
-    items: [
-      'Open to all undergraduate and postgraduate students from any recognised institution.',
-      'Teams of 2–5 members; solo participation is not permitted.',
-      'Each participant may register for only one track.',
-      'Faculty or industry mentors are welcome as advisors but not as team members.',
-    ],
-  },
-  {
-    id: 'submission',
-    title: 'Submission Requirements',
-    items: [
-      'Submit a working prototype/demo + 5-minute pitch deck by Day 2 at 10:00 PM IST.',
-      'Source code must be pushed to a public GitHub repository.',
-      'Include a README with setup instructions and problem statement.',
-      'Teams must present live to judges — no pre-recorded videos.',
-    ],
-  },
-  {
-    id: 'judging',
-    title: 'Judging Criteria',
-    items: [
-      'Innovation & Creativity — 30%',
-      'Technical Complexity & Execution — 25%',
-      'Impact & Scalability — 25%',
-      'Design & User Experience — 20%',
-    ],
-  },
-  {
-    id: 'conduct',
-    title: 'Code of Conduct',
-    items: [
-      'All work must be original; plagiarism leads to immediate disqualification.',
-      'Respectful behaviour towards all participants, judges, and volunteers is mandatory.',
-      'Use of pre-built templates must be disclosed during presentation.',
-      'Violations will be reviewed by the organising committee whose decision is final.',
-    ],
-  },
+  { id: 'eligibility', title: 'Eligibility', items: ['Open to all undergraduate and postgraduate students from any recognised institution.', 'Teams of 1–4 members for this registration flow.', 'Each participant may register for only one track.', 'Faculty or industry mentors are welcome as advisors but not as team members.'] },
+  { id: 'submission', title: 'Submission Requirements', items: ['Submit a working prototype/demo + 5-minute pitch deck by Day 2 at 10:00 PM IST.', 'Source code must be pushed to a public GitHub repository.', 'Include a README with setup instructions and problem statement.', 'Teams must present live to judges — no pre-recorded videos.'] },
+  { id: 'judging', title: 'Judging Criteria', items: ['Innovation & Creativity — 30%', 'Technical Complexity & Execution — 25%', 'Impact & Scalability — 25%', 'Design & User Experience — 20%'] },
+  { id: 'conduct', title: 'Code of Conduct', items: ['All work must be original; plagiarism leads to immediate disqualification.', 'Respectful behaviour towards all participants, judges, and volunteers is mandatory.', 'Use of pre-built templates must be disclosed during presentation.', 'Violations will be reviewed by the organising committee whose decision is final.'] },
 ];
 
 const LEADERBOARD = [
@@ -117,9 +84,51 @@ const LEADERBOARD = [
   { rank: 5, teamId: 'TM-0061', teamName: 'HeartBeat Labs', track: 'Health & MedTech', score: 877, submittedAt: '2025-09-14T23:01:00Z' },
 ];
 
-/**
- * Helper to generate a collision-free 4-digit unique Team ID
- */
+const DEFAULT_REGISTRATION_FEE = Number(process.env.DEFAULT_REGISTRATION_FEE || 200);
+
+const normalizeMember = (member) => ({
+  name: String(member?.name || '').trim(),
+  email: String(member?.email || '').trim().toLowerCase(),
+  phone: String(member?.phone || '').trim(),
+});
+
+const parseMembers = (membersInput) => {
+  if (Array.isArray(membersInput)) return membersInput.map(normalizeMember);
+  if (!membersInput) return [];
+  try {
+    const parsed = JSON.parse(membersInput);
+    if (Array.isArray(parsed)) return parsed.map(normalizeMember);
+  } catch (error) {
+    return [];
+  }
+  return [];
+};
+
+const getCurrentRegistrationFee = async () => {
+  const setting = await RegistrationFee.findOne({ key: 'currentRegistrationFee' }).sort({ updatedAt: -1 }).lean();
+  return setting ? Number(setting.value) : DEFAULT_REGISTRATION_FEE;
+};
+
+const setCurrentRegistrationFee = async (newFee) => {
+  const safeFee = Number(newFee);
+  if (!Number.isFinite(safeFee) || safeFee <= 0) {
+    throw new Error('Registration fee must be a positive number');
+  }
+
+  const updated = await RegistrationFee.findOneAndUpdate(
+    { key: 'currentRegistrationFee' },
+    {
+      key: 'currentRegistrationFee',
+      value: safeFee,
+      lastUpdatedBy: 'admin',
+      updatedAt: new Date(),
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  return Number(updated.value);
+};
+
 const generateUniqueTeamId = async () => {
   let isUnique = false;
   let teamId = '';
@@ -134,196 +143,363 @@ const generateUniqueTeamId = async () => {
   return teamId;
 };
 
-/**
- * @desc    Submit new team registration
- * @route   POST /api/register
- * @access  Public
- */
+const getRegistrationPayload = (req) => {
+  const { teamName, trackId, leaderName, leaderEmail, leaderPhone, members } = req.body;
+  return {
+    teamName: String(teamName || '').trim(),
+    trackId: String(trackId || '').trim(),
+    leaderName: String(leaderName || '').trim(),
+    leaderEmail: String(leaderEmail || '').trim().toLowerCase(),
+    leaderPhone: String(leaderPhone || '').trim(),
+    members: parseMembers(members),
+  };
+};
+
 const registerTeam = async (req, res, next) => {
   try {
-    const { teamName, trackId, leaderName, leaderEmail, members } = req.body;
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment screenshot is required before registration can be submitted.'
+      });
+    }
 
-    // 1. Gather all emails to verify uniqueness against database
-    const emailsToCheck = [leaderEmail, ...members.map(m => m.email)].map(email => email.toLowerCase().trim());
+    const payload = getRegistrationPayload(req);
+    const { teamName, trackId, leaderName, leaderEmail, leaderPhone, members } = payload;
+    const totalParticipants = 1 + members.length;
 
-    // Query DB to see if any email is already registered as a leader or member
+    if (totalParticipants < 1 || totalParticipants > 4) {
+      return res.status(400).json({
+        success: false,
+        message: 'A team must have between 1 and 4 participants.'
+      });
+    }
+
+    const emailList = [leaderEmail, ...members.map((member) => member.email)];
+    if (emailList.some((email) => !email || !/^\S+@\S+\.\S+$/.test(email))) {
+      return res.status(400).json({
+        success: false,
+        message: 'All participant emails must be valid.'
+      });
+    }
+
+    const uniqueEmails = new Set(emailList);
+    if (uniqueEmails.size !== emailList.length) {
+      return res.status(400).json({
+        success: false,
+        message: 'Duplicate email addresses are not allowed within a registration.'
+      });
+    }
+
     const existingRegistration = await Registration.findOne({
       $or: [
-        { leaderEmail: { $in: emailsToCheck } },
-        { 'members.email': { $in: emailsToCheck } }
+        { leaderEmail: { $in: emailList } },
+        { 'members.email': { $in: emailList } }
       ]
     });
 
     if (existingRegistration) {
       return res.status(409).json({
         success: false,
-        message: 'One or more email addresses in your team are already registered.'
+        message: 'One or more team members are already registered.'
       });
     }
 
-    // 2. Generate a unique Team ID
+    const currentFee = await getCurrentRegistrationFee();
+    const totalRegistrationFee = currentFee * totalParticipants;
     const teamId = await generateUniqueTeamId();
 
-    // 3. Create the registration document
     const registration = new Registration({
       teamId,
       teamName,
       trackId,
       leaderName,
       leaderEmail,
-      members
+      leaderPhone,
+      members: members.map((member) => ({
+        name: member.name,
+        email: member.email,
+        phone: member.phone,
+      })),
+      participantCount: totalParticipants,
+      feePerParticipantAtRegistration: currentFee,
+      totalRegistrationFee,
+      paymentScreenshot: {
+        fileName: req.file.filename,
+        originalName: req.file.originalname,
+        mimeType: req.file.mimetype,
+        size: req.file.size,
+        path: req.file.path,
+        url: `/api/admin/registrations/${req.file.filename}`,
+        uploadedAt: new Date(),
+      },
+      verificationStatus: 'Pending Verification',
+      paymentAmountChecked: null,
+      rejectionReason: null,
+      verifiedAt: null,
+      rejectedAt: null,
+      verificationEmailSent: false,
+      rejectionEmailSent: false,
     });
 
     await registration.save();
 
-    // 4. Respond with the registered payload
     res.status(201).json({
       success: true,
       teamId,
-      message: `Team "${teamName}" registered successfully!`
+      registrationId: registration._id,
+      message: 'Registration over. Verification pending. You may exit.',
+      registration: {
+        teamId,
+        participantCount: totalParticipants,
+        totalRegistrationFee,
+        verificationStatus: 'Pending Verification',
+      }
     });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * @desc    Get all tracks
- * @route   GET /api/tracks
- * @access  Public
- */
+const getRegistrationFee = async (req, res, next) => {
+  try {
+    const fee = await getCurrentRegistrationFee();
+    res.status(200).json({
+      success: true,
+      fee,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateRegistrationFee = async (req, res, next) => {
+  try {
+    const fee = Number(req.body?.fee ?? req.body?.value ?? req.body?.registrationFee);
+    const updatedFee = await setCurrentRegistrationFee(fee);
+    res.status(200).json({
+      success: true,
+      fee: updatedFee,
+      message: `Registration fee updated to ₹${updatedFee}`
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getTracks = async (req, res, next) => {
   try {
-    res.status(200).json({
-      success: true,
-      data: TRACKS
-    });
+    res.status(200).json({ success: true, data: TRACKS });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * @desc    Get all guidelines
- * @route   GET /api/guidelines
- * @access  Public
- */
 const getGuidelines = async (req, res, next) => {
   try {
-    res.status(200).json({
-      success: true,
-      data: GUIDELINES
-    });
+    res.status(200).json({ success: true, data: GUIDELINES });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * @desc    Get leaderboard
- * @route   GET /api/leaderboard
- * @access  Public
- */
 const getLeaderboard = async (req, res, next) => {
   try {
-    res.status(200).json({
-      success: true,
-      data: LEADERBOARD
-    });
+    res.status(200).json({ success: true, data: LEADERBOARD });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * @desc    Admin login
- * @route   POST /api/admin/login
- * @access  Public
- */
 const adminLogin = async (req, res, next) => {
   try {
     const { password } = req.body;
 
     if (!password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Password is required'
-      });
+      return res.status(400).json({ success: false, message: 'Password is required' });
     }
 
     if (password !== process.env.ADMIN_PASSWORD) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid admin password'
-      });
+      return res.status(401).json({ success: false, message: 'Invalid admin password' });
     }
 
-    // Generate secure session token
     const token = crypto.randomBytes(32).toString('hex');
     activeSessions.add(token);
 
-    res.status(200).json({
-      success: true,
-      token,
-      message: 'Logged in successfully'
-    });
+    res.status(200).json({ success: true, token, message: 'Logged in successfully' });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * @desc    Get all registrations
- * @route   GET /api/admin/registrations
- * @access  Private (Admin)
- */
 const getAdminRegistrations = async (req, res, next) => {
   try {
     const registrations = await Registration.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
-      data: registrations
+      data: registrations,
     });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * @desc    Update team verification status
- * @route   PATCH /api/admin/registrations/:id/verification
- * @access  Private (Admin)
- */
+const getRegistrationById = async (req, res, next) => {
+  try {
+    const registration = await Registration.findById(req.params.id);
+    if (!registration) {
+      return res.status(404).json({ success: false, message: 'Registration not found' });
+    }
+    res.status(200).json({ success: true, data: registration });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getPaymentScreenshot = async (req, res, next) => {
+  try {
+    const registration = await Registration.findById(req.params.id);
+    if (!registration || !registration.paymentScreenshot?.path) {
+      return res.status(404).json({ success: false, message: 'Payment screenshot not found' });
+    }
+
+    if (!fs.existsSync(registration.paymentScreenshot.path)) {
+      return res.status(404).json({ success: false, message: 'Stored payment screenshot missing' });
+    }
+
+    res.sendFile(registration.paymentScreenshot.path);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const updateTeamVerification = async (req, res, next) => {
   try {
-    const { status } = req.body;
     const { id } = req.params;
+    const { status, paymentAmountChecked, rejectionReason } = req.body;
+    const normalizedStatus = String(status || '').trim();
+    const validStatuses = ['Pending Verification', 'Verified', 'Rejected'];
 
-    if (!status || !['PENDING', 'VERIFIED'].includes(status)) {
+    if (!validStatuses.includes(normalizedStatus)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid verification status. Must be PENDING or VERIFIED.'
+        message: 'Invalid verification status. Use Pending Verification, Verified, or Rejected.',
       });
     }
 
-    const registration = await Registration.findByIdAndUpdate(
-      id,
-      { verificationStatus: status },
-      { new: true }
-    );
-
+    const registration = await Registration.findById(id);
     if (!registration) {
-      return res.status(404).json({
-        success: false,
-        message: 'Registration not found'
-      });
+      return res.status(404).json({ success: false, message: 'Registration not found' });
     }
+
+    if (normalizedStatus === 'Verified') {
+      if (registration.verificationStatus === 'Rejected') {
+        return res.status(400).json({ success: false, message: 'A rejected registration cannot be verified.' });
+      }
+      registration.verificationStatus = 'Verified';
+      registration.verifiedAt = new Date();
+      registration.rejectedAt = null;
+      registration.rejectionReason = null;
+      if (paymentAmountChecked !== undefined && paymentAmountChecked !== null && paymentAmountChecked !== '') {
+        registration.paymentAmountChecked = Number(paymentAmountChecked);
+      }
+    }
+
+    if (normalizedStatus === 'Rejected') {
+      if (registration.verificationStatus === 'Verified') {
+        return res.status(400).json({ success: false, message: 'A verified registration cannot be rejected.' });
+      }
+      const reason = String(rejectionReason || '').trim();
+      if (!reason) {
+        return res.status(400).json({ success: false, message: 'Rejection reason is required.' });
+      }
+      registration.verificationStatus = 'Rejected';
+      registration.rejectedAt = new Date();
+      registration.rejectionReason = reason;
+      if (paymentAmountChecked !== undefined && paymentAmountChecked !== null && paymentAmountChecked !== '') {
+        registration.paymentAmountChecked = Number(paymentAmountChecked);
+      }
+    }
+
+    if (normalizedStatus === 'Pending Verification') {
+      if (registration.verificationStatus === 'Verified' || registration.verificationStatus === 'Rejected') {
+        return res.status(400).json({ success: false, message: 'A verified or rejected registration cannot be moved back to pending.' });
+      }
+      registration.verificationStatus = 'Pending Verification';
+      registration.rejectedAt = null;
+      registration.verifiedAt = null;
+      registration.rejectionReason = null;
+    }
+
+    await registration.save();
 
     res.status(200).json({
       success: true,
       data: registration,
-      message: `Status updated to ${status}`
+      message: `Status updated to ${registration.verificationStatus}`,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const sendVerificationEmailToRegistration = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const registration = await Registration.findById(id);
+    if (!registration) {
+      return res.status(404).json({ success: false, message: 'Registration not found' });
+    }
+
+    if (registration.verificationStatus !== 'Verified') {
+      return res.status(400).json({ success: false, message: 'Only verified registrations can receive a verification email.' });
+    }
+
+    if (registration.verificationEmailSent) {
+      return res.status(409).json({ success: false, message: 'Verification email has already been sent.' });
+    }
+
+    const sent = await sendVerificationEmail(registration);
+    if (!sent) {
+      return res.status(503).json({ success: false, message: 'Verification email could not be sent right now.' });
+    }
+
+    registration.verificationEmailSent = true;
+    registration.verificationEmailSentAt = new Date();
+    await registration.save();
+
+    res.status(200).json({ success: true, message: 'Verification email sent to all participants.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const sendRejectionEmailToRegistration = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const registration = await Registration.findById(id);
+    if (!registration) {
+      return res.status(404).json({ success: false, message: 'Registration not found' });
+    }
+
+    if (registration.verificationStatus !== 'Rejected') {
+      return res.status(400).json({ success: false, message: 'Only rejected registrations can receive a rejection email.' });
+    }
+
+    if (registration.rejectionEmailSent) {
+      return res.status(409).json({ success: false, message: 'Rejection email has already been sent.' });
+    }
+
+    const sent = await sendRejectionEmail(registration);
+    if (!sent) {
+      return res.status(503).json({ success: false, message: 'Rejection email could not be sent right now.' });
+    }
+
+    registration.rejectionEmailSent = true;
+    registration.rejectionEmailSentAt = new Date();
+    await registration.save();
+
+    res.status(200).json({ success: true, message: 'Rejection email sent to all participants.' });
   } catch (error) {
     next(error);
   }
@@ -331,10 +507,17 @@ const updateTeamVerification = async (req, res, next) => {
 
 module.exports = {
   registerTeam,
+  getRegistrationFee,
+  updateRegistrationFee,
   getTracks,
   getGuidelines,
   getLeaderboard,
   adminLogin,
   getAdminRegistrations,
-  updateTeamVerification
+  getRegistrationById,
+  getPaymentScreenshot,
+  updateTeamVerification,
+  sendVerificationEmailToRegistration,
+  sendRejectionEmailToRegistration,
 };
+
