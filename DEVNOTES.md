@@ -1,200 +1,77 @@
-# Frontend Developer Notes (DEVNOTES)
+# Developer Notes
 
-Hey! Here are the details about the newly implemented Express.js backend, recent architectural updates (such as student login removal), and how to connect the Next.js frontend to it.
+## Environment
 
----
+Public frontend: create `elevateX-fe/.env.local`:
 
-## 🚀 Local Development Setup
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:5000
+```
 
-To run the full stack locally:
+Admin frontend: create `elevateX-admin/.env.local`:
 
-1. **Start the Backend**:
-   ```bash
-   cd backend
-   npm install
-   npm run dev
-   ```
-   The backend server runs on **`http://localhost:5000`** and connects to the MongoDB Atlas cluster.
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:5000
+```
 
-2. **Start the Frontend**:
-   At the root directory (`/`):
-   ```bash
-   npm run dev
-   ```
-   The Next.js dev server runs on **`http://localhost:3000`**.
+Backend: create `elevateX-be/.env` with values for:
 
-3. **Configure Environment Variables**:
-   In the root frontend directory, create a `.env.local` file (already created for you locally) and specify the backend endpoint URL:
-   ```env
-   NEXT_PUBLIC_APP_URL=http://localhost:5000
-   ```
+```env
+PORT=5000
+MONGODB_URI=<mongodb-atlas-connection-string>
+ADMIN_PASSWORD=<strong-admin-password>
+DEFAULT_REGISTRATION_FEE=200
+```
 
----
+Email actions also require the SMTP variables read by `elevateX-be/services/emailService.js`. Keep all secrets in environment files and out of source control. `ADMIN_PASSWORD` must never use a `NEXT_PUBLIC_` prefix.
 
-## 🔄 Recent Changes
+## Local Development
 
-### 1. Student Login Removal
-* **No Accounts Required**: Student login, signup, password management, and personal dashboards have been completely removed.
-* **Streamlined Flow**: Students directly fill the registration form on the homepage and submit. The system registers them immediately and generates a team ID, setting their payment verification status to `PENDING` by default.
-* **Cleaned Pages**: The `/login` and `/dashboard` directories have been deleted, and the links have been removed from the navigation bar.
+```bash
+# Backend
+cd elevateX-be
+npm install
+npm run dev
 
-### 2. Admin Panel (`/admin`)
-* **Admin Access**: A password-protected Admin Dashboard is now available at `/admin`.
-* **Manual Verification**: Admins can log in, view registrations, search teams/members, and manually verify fee payments by setting the team status to `PENDING` or `VERIFIED`.
+# Public frontend
+cd elevateX-fe
+npm install
+npm run dev
 
----
+# Admin frontend
+cd elevateX-admin
+npm install
+npm run dev
+```
 
-## 🌐 API Specifications & Endpoints
+The frontend calls the backend through `NEXT_PUBLIC_APP_URL`. The backend connects to MongoDB before listening on port 5000.
 
-All backend endpoints are prefixed with `/api`.
+## Data Flow
 
-### 1. Register Team
-* **Endpoint**: `POST /api/register`
-* **Content-Type**: `application/json`
-* **Request Body Payload**:
-  ```json
-  {
-    "teamName": "Nebula Team",
-    "trackId": "ai-ml",
-    "leaderName": "Achyuth",
-    "leaderEmail": "achyuth@example.com",
-    "members": [
-      {
-        "name": "Bob",
-        "email": "bob@example.com"
-      }
-    ]
-  }
-  ```
-  *Note: A team must have exactly 1 leader, and between 0 and 3 additional members (maximum team size of 4 total).*
+1. The registration modal collects team, leader, participant, and payment-screenshot data.
+2. `elevateX-fe/src/lib/api.ts` sends the form as multipart data to `POST /api/register`.
+3. The backend validates fields, participant count, image content, and duplicate email addresses.
+4. MongoDB stores the registration and the fee that applied at submission time.
+5. An admin reviews the uploaded payment screenshot and changes the verification status.
 
-* **Successful Response** (`201 Created`):
-  ```json
-  {
-    "success": true,
-    "teamId": "TM-3990",
-    "message": "Team \"Nebula Team\" registered successfully!"
-  }
-  ```
+Teams contain one leader and zero to three additional participants. Each participant requires a name, email, and phone number. Supported tracks are `ai-ml`, `web3`, `open-innovation`, `sustainability`, `fintech`, and `healthtech`.
 
-* **Error Responses**:
-  * **`400 Bad Request`**: Validation failure (e.g. invalid emails, empty strings, team size > 4, or duplicate emails *within* the payload).
-    ```json
-    {
-      "success": false,
-      "message": "Team name must be at least 2 characters"
-    }
-    ```
-  * **`409 Conflict`**: Duplicate registration (e.g., if the leader's email, or any member's email, is already registered in another team in the database).
-    ```json
-    {
-      "success": false,
-      "message": "One or more email addresses in your team are already registered."
-    }
-    ```
+## Admin Authentication
 
----
+`POST /api/admin/login` compares the supplied password with the backend-only `ADMIN_PASSWORD` environment variable and returns a session token. Protected admin requests must send that token as a bearer token. The admin frontend keeps the token in `sessionStorage`; it is not a substitute for backend authorization.
 
-### 2. Fetch Tracks
-* **Endpoint**: `GET /api/tracks`
-* **Response** (`200 OK`):
-  ```json
-  {
-    "success": true,
-    "data": [
-      {
-        "id": "ai-ml",
-        "name": "AI & Machine Learning",
-        "description": "...",
-        "icon": "🤖",
-        "color": "#d4f000",
-        "maxTeamSize": 4,
-        "prizePool": "₹1,00,000",
-        "tags": ["Python", "TensorFlow", "PyTorch", "LLMs"]
-      }
-    ]
-  }
-  ```
+## Verification and Email Rules
 
----
+The backend accepts only `Pending Verification`, `Verified`, and `Rejected`. Rejections require a reason. A verified registration cannot be rejected, and a rejected registration cannot be verified. Verification and rejection emails can be sent once when the registration has the matching status.
 
-### 3. Admin Login
-* **Endpoint**: `POST /api/admin/login`
-* **Content-Type**: `application/json`
-* **Request Body Payload**:
-  ```json
-  {
-    "password": "elevate@123"
-  }
-  ```
-* **Successful Response** (`200 OK`):
-  ```json
-  {
-    "success": true,
-    "token": "a1b2c3d4...",
-    "message": "Logged in successfully"
-  }
-  ```
-* **Error Response** (`401 Unauthorized`):
-  ```json
-  {
-    "success": false,
-    "message": "Invalid admin password"
-  }
-  ```
+## Useful Checks
 
----
+```bash
+# Frontend
+npm run type-check
+npm run build
 
-### 4. Fetch All Registrations (Admin Only)
-* **Endpoint**: `GET /api/admin/registrations`
-* **Headers**: `Authorization: Bearer <admin_token>`
-* **Response** (`200 OK`):
-  ```json
-  {
-    "success": true,
-    "data": [
-      {
-        "_id": "6a89a234...",
-        "teamId": "TM-3990",
-        "teamName": "Nebula Team",
-        "trackId": "ai-ml",
-        "leaderName": "Achyuth",
-        "leaderEmail": "achyuth@example.com",
-        "members": [
-          { "name": "Bob", "email": "bob@example.com" }
-        ],
-        "verificationStatus": "PENDING",
-        "createdAt": "2026-08-22T13:20:52.448Z",
-        "updatedAt": "2026-08-22T13:20:52.448Z"
-      }
-    ]
-  }
-  ```
-
----
-
-### 5. Update Verification Status (Admin Only)
-* **Endpoint**: `PATCH /api/admin/registrations/:id/verification`
-* **Headers**: `Authorization: Bearer <admin_token>`
-* **Request Body Payload**:
-  ```json
-  {
-    "status": "VERIFIED"
-  }
-  ```
-  *Note: Accepted status values are only `"PENDING"` or `"VERIFIED"`.*
-
-* **Successful Response** (`200 OK`):
-  ```json
-  {
-    "success": true,
-    "message": "Status updated to VERIFIED",
-    "data": { ... }
-  }
-  ```
-
----
-
-## 🛠 Frontend API Implementation details
-
-The client-side API integrations are centralized in [`src/lib/api.ts`](file:///c:/elevateX/src/lib/api.ts). It retrieves settings from `process.env.NEXT_PUBLIC_APP_URL` and formats return payloads appropriately. No additional frontend edits are needed to consume the real API.
+# Backend
+cd elevateX-be
+npm start
+```
