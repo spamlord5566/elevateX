@@ -22,7 +22,9 @@ const allowedOrigins = [
   'https://your-frontend.vercel.app',
   'https://www.yourdomain.com',
   'http://192.168.1.9:3000',
-  'http://192.168.1.9:3001'
+  'http://192.168.1.9:3001',
+  'https://elevate-x-six.vercel.app',
+  'https://elevatex-1.onrender.com'
 ];
 
 app.use(cors({
