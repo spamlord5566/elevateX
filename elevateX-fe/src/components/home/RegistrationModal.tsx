@@ -40,14 +40,10 @@ interface Errors {
   [key: string]: string;
 }
 
-const TRACKS = [
-  { id: 'ai-ml', name: 'AI & Machine Learning' },
-  { id: 'web3', name: 'Web3 & Blockchain' },
-  { id: 'open-innovation', name: 'Open Innovation' },
-  { id: 'sustainability', name: 'Sustainability & Climate Tech' },
-  { id: 'fintech', name: 'FinTech & Payments' },
-  { id: 'healthtech', name: 'Health & MedTech' },
-];
+// ElevateX is no longer track-based, but the existing registration API/DB
+// still require a valid trackId per the current backend contract. This value
+// is sent automatically and is not shown to the user.
+const DEFAULT_TRACK_ID = 'open-innovation';
 
 const STEPS = ['Participant Details', 'Payment & Review'];
 
@@ -81,14 +77,6 @@ function ParticipantDetails({ data, errors, onChange }: { data: FormData; errors
       <Input id="participantName" label="Full Name" placeholder="Your full name" value={data.name} onChange={(e) => onChange('name', e.target.value)} error={errors.name} autoFocus maxLength={50} />
       <Input id="participantEmail" label="Email" type="email" placeholder="you@example.com" value={data.email} onChange={(e) => onChange('email', e.target.value)} error={errors.email} />
       <Input id="participantPhone" label="Phone Number" type="tel" placeholder="+91 98765 43210" value={data.phone} onChange={(e) => onChange('phone', e.target.value)} error={errors.phone} />
-      <div className={styles.trackField}>
-        <label htmlFor="trackId" className={styles.fieldLabel}>Select Track</label>
-        <select id="trackId" value={data.trackId} onChange={(e) => onChange('trackId', e.target.value)} aria-invalid={!!errors.trackId} className={clsx(styles.select, errors.trackId && styles.selectError)}>
-          <option value="">— Choose your track —</option>
-          {TRACKS.map((track) => <option key={track.id} value={track.id}>{track.name}</option>)}
-        </select>
-        {errors.trackId && <p role="alert" className={styles.error}>⚠ {errors.trackId}</p>}
-      </div>
     </div>
   );
 }
@@ -132,7 +120,6 @@ function PaymentReview({ data, fee, paymentFile, errors, onFileChange, onSubmit,
         <Row label="Name" value={data.name} />
         <Row label="Email" value={data.email} />
         <Row label="Phone" value={data.phone} />
-        <Row label="Track" value={TRACKS.find((track) => track.id === data.trackId)?.name ?? data.trackId} />
       </div>
 
       <Button variant="primary" size="sm" onClick={onSubmit} isLoading={isSubmitting} disabled={isSubmitting} rightIcon={!isSubmitting ? <CheckCircle size={16} /> : undefined}>
@@ -162,7 +149,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
   const [paymentFile, setPaymentFile] = useState<File | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedRegistration, setSubmittedRegistration] = useState<RegistrationResult | null>(null);
-  const [formData, setFormData] = useState<FormData>({ name: '', email: '', phone: '', trackId: '' });
+  const [formData, setFormData] = useState<FormData>({ name: '', email: '', phone: '', trackId: DEFAULT_TRACK_ID });
 
   useEffect(() => {
     if (isOpen) {
@@ -203,7 +190,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
     setPaymentFile(null);
     setSubmittedRegistration(null);
     setIsSubmitted(false);
-    setFormData({ name: '', email: '', phone: '', trackId: '' });
+    setFormData({ name: '', email: '', phone: '', trackId: DEFAULT_TRACK_ID });
   }
 
   function handleFieldChange(field: keyof FormData, value: string) {

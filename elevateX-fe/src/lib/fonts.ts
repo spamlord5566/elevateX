@@ -19,7 +19,7 @@ export const spaceGrotesk = Space_Grotesk({
 });
 
 /**
- * Monospace font — used for code snippets & leaderboard IDs
+ * Monospace font — used for code snippets & registration IDs
  */
 export const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],

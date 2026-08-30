@@ -2,8 +2,7 @@
 
 import { m } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
-import { ChevronRight, Zap, Users, Trophy } from 'lucide-react';
-import Image from 'next/image';
+import { ChevronRight, Users, Sparkles, Mic2 } from 'lucide-react';
 import styles from './Hero.module.css';
 
 interface HeroProps {
@@ -11,9 +10,9 @@ interface HeroProps {
 }
 
 const stats = [
-  { icon: <Users size={20} />, value: '2,000+', label: 'Participants' },
-  { icon: <Trophy size={20} />, value: '₹4,50,000', label: 'Prize Pool' },
-  { icon: <Zap size={20} />, value: '36 hrs', label: 'Duration' },
+  { icon: <Users size={20} />, value: '2,000+', label: 'Freshers Joining' },
+  { icon: <Sparkles size={20} />, value: '1 Day', label: 'Of Fun & Experiences' },
+  { icon: <Mic2 size={20} />, value: 'Alumni + Seniors', label: 'Stories, Guidance & Interaction' },
 ];
 
 const containerVariants = {
@@ -64,7 +63,7 @@ export default function Hero({ onRegisterClick }: HeroProps) {
         <m.div variants={itemVariants}>
           <span className={`${styles.badge} glass-card`}>
             <span className={styles.pulseDot} />
-            Registration Open — Sept 2026
+            Registration Open
           </span>
         </m.div>
 
@@ -86,9 +85,9 @@ export default function Hero({ onRegisterClick }: HeroProps) {
           variants={itemVariants}
           className={styles.tagline}
         >
-          Prepared to be{' '}
+          Where Freshers{' '}
           <span className={styles.taglineAccent}>
-            Amazed
+            Connect, Chill & Create Memories
           </span>
         </m.p>
 
@@ -97,9 +96,9 @@ export default function Hero({ onRegisterClick }: HeroProps) {
           variants={itemVariants}
           className={styles.subcopy}
         >
-          India&apos;s most electrifying hackathon returns. 36 hours of raw
-          innovation, real challenges, and life-changing prizes. Show the world
-          what you&apos;re built for.
+          A fun-filled freshers program designed to break the ice, meet new
+          people, connect with seniors and alumni, and kick off your college
+          journey together.
         </m.p>
 
         {/* CTAs */}
@@ -122,12 +121,12 @@ export default function Hero({ onRegisterClick }: HeroProps) {
             variant="outline"
             onClick={() =>
               document
-                .getElementById('tracks')
+                .getElementById('activities')
                 ?.scrollIntoView({ behavior: 'smooth' })
             }
             id="hero-explore-btn"
           >
-            Explore Tracks
+            Explore Activities
           </Button>
         </m.div>
 

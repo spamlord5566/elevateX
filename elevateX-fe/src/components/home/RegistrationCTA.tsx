@@ -2,7 +2,7 @@
 
 import { m } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
-import { ChevronRight, Star, Clock, MapPin } from 'lucide-react';
+import { ChevronRight, Star, Users, Music } from 'lucide-react';
 import styles from './RegistrationCTA.module.css';
 
 interface RegistrationCTAProps {
@@ -10,9 +10,9 @@ interface RegistrationCTAProps {
 }
 
 const perks = [
-  { icon: <Star size={16} />, text: 'Mentorship from industry leaders' },
-  { icon: <Clock size={16} />, text: '36 hours of non-stop hacking' },
-  { icon: <MapPin size={16} />, text: 'Venue + meals provided' },
+  { icon: <Star size={16} />, text: 'Alumni Talk with seniors and alumni' },
+  { icon: <Users size={16} />, text: 'Fun & Games to break the ice' },
+  { icon: <Music size={16} />, text: 'A relaxed Jamming Session' },
 ];
 
 /**
@@ -48,27 +48,27 @@ export default function RegistrationCTA({ onRegisterClick }: RegistrationCTAProp
           transition={{ duration: 0.6 }}
           className={`glass-card ${styles.card}`}
         >
-          {/* Countdown-style badge */}
+          {/* Status badge */}
           <span className={styles.badge}>
             <span className={styles.dot} />
-            Registrations close Sept 1, 2025
+            Registration Open
           </span>
 
           <h2
             id="cta-heading"
             className={`heading-lg ${styles.heading}`}
           >
-            Ready to{' '}
+            Ready to Join{' '}
             <span className={`text-glow ${styles.accent}`}>
-              Elevate
-            </span>{' '}
-            Your Game?
+              the Fun
+            </span>
+            ?
           </h2>
 
           <p className={styles.copy}>
-            Join 2,000+ innovators from across India. Build the future in 36
-            hours, win life-changing prizes, and make connections that last a
-            lifetime.
+            Meet new people, connect with seniors and alumni, take part in
+            exciting activities, and start your college journey with memories
+            worth keeping.
           </p>
 
           {/* Perks */}
@@ -99,12 +99,8 @@ export default function RegistrationCTA({ onRegisterClick }: RegistrationCTAProp
             aria-label="Open registration wizard"
             className={styles.ctaButton}
           >
-            Register as a Participant
+            Register Now
           </Button>
-
-          <p className={styles.buttonNote}>
-            Free to participate · No entry fee
-          </p>
         </m.div>
       </div>
     </section>

@@ -5,16 +5,15 @@ import styles from './Footer.module.css';
 
 const navLinks = [
   { label: 'Home', href: '#hero' },
-  { label: 'Tracks', href: '#tracks' },
-  { label: 'Guidelines', href: '#guidelines' },
+  { label: 'About', href: '#about' },
+  { label: 'Activities', href: '#activities' },
   { label: 'Register', href: '#register' },
-  { label: 'Schedule', href: '#schedule' },
 ];
 
 const socialLinks = [
   { label: 'Twitter / X', href: 'https://twitter.com', icon: <Twitter size={16} /> },
-  { label: 'Instagram', href: 'https://instagram.com', icon: <Instagram size={16} /> },
-  { label: 'LinkedIn', href: 'https://linkedin.com', icon: <Linkedin size={16} /> },
+  { label: 'Instagram', href: 'https://www.instagram.com/fisathorizon?igsi=eXZiOHVqZHN2emFv', icon: <Instagram size={16} /> },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/fisat-horizon/', icon: <Linkedin size={16} /> },
   { label: 'GitHub', href: 'https://github.com', icon: <Github size={16} /> },
 ];
 
@@ -49,7 +48,7 @@ export default function Footer() {
               </span>
             </div>
             <p className={styles.description}>
-              India&apos;s premier hackathon experience. Prepared to be amazed.
+              A freshers program to connect, chill, and create memories.
             </p>
             {/* Social links */}
             <div className={styles.socials} aria-label="Social media links">
@@ -105,11 +104,10 @@ export default function Footer() {
                   className={styles.link}
                   aria-label="Email us at hello@elevatex.in"
                 >
-                  hello@elevatex.in
+                  mail@fisat.ac.in
                 </a>
               </li>
-              <li>📍 IIT Bombay, Mumbai, Maharashtra</li>
-              <li>📅 September 13–14, 2025</li>
+              <li>📍 FISAT, Hormis Nagar, Mookkannoor, Angamaly, Kerala 683577, India</li>
             </ul>
           </div>
         </div>

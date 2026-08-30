@@ -11,26 +11,23 @@ import styles from './Page.module.css';
 
 // ─── Dynamic Imports (SSR disabled for heavy client components) ──────────
 
-const Tracks = dynamic(() => import('@/components/home/Tracks'), {
+const AboutSection = dynamic(() => import('@/components/home/AboutSection'), {
   ssr: false,
   loading: () => (
     <div className={styles.loading}>
-      <LoadingSpinner size="lg" label="Loading tracks…" />
+      <LoadingSpinner size="lg" label="Loading…" />
     </div>
   ),
 });
 
-const GuidelinesSection = dynamic(
-  () => import('@/components/home/GuidelinesSection'),
-  {
-    ssr: false,
-    loading: () => (
-      <div className={styles.loading}>
-        <LoadingSpinner size="lg" label="Loading guidelines…" />
-      </div>
-    ),
-  },
-);
+const Activities = dynamic(() => import('@/components/home/Activities'), {
+  ssr: false,
+  loading: () => (
+    <div className={styles.loading}>
+      <LoadingSpinner size="lg" label="Loading activities…" />
+    </div>
+  ),
+});
 
 const RegistrationCTA = dynamic(
   () => import('@/components/home/RegistrationCTA'),
@@ -67,10 +64,10 @@ export default function HomePage() {
 
       {/* Lazy-loaded sections — deferred until scrolled into view */}
       <LazyLoadSection
-        placeholderHeight="500px"
+        placeholderHeight="400px"
         rootMargin="0px 0px -100px 0px"
       >
-        <Tracks />
+        <AboutSection />
       </LazyLoadSection>
 
       {/* Divider */}
@@ -84,10 +81,10 @@ export default function HomePage() {
       </div>
 
       <LazyLoadSection
-        placeholderHeight="400px"
+        placeholderHeight="500px"
         rootMargin="0px 0px -100px 0px"
       >
-        <GuidelinesSection />
+        <Activities />
       </LazyLoadSection>
 
       <LazyLoadSection

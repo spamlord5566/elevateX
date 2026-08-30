@@ -10,7 +10,7 @@ interface QueryProviderProps {
 
 /**
  * Wraps the app with TanStack Query client.
- * Configured with sensible defaults for a hackathon site:
+ * Configured with sensible defaults for the ElevateX site:
  * - staleTime: 60s (data won't refetch too eagerly)
  * - gcTime: 5min (cache kept alive for navigation)
  * - retry: 1 (fail fast on real errors in dev)

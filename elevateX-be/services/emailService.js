@@ -76,17 +76,59 @@ const sendVerificationEmail = async (registration) => {
 
   const subject = `Verification Successful — ${registration.name}`;
   const text = [
-    `Participant: ${registration.name}`,
-    `Registration ID: ${registration.registrationId}`,
-    `Amount paid: ₹${registration.totalRegistrationFee}`,
-    'Your payment has been verified and your registration is confirmed.',
+    `Hello ${registration.name},`,
+    '',
+    "We're happy to let you know that your registration for ElevateX — the Freshers Program has been successfully verified! 🎉",
+    '',
+    "Your registration is now confirmed, and we're excited to have you join us for a day filled with fun, interaction, new connections, and memorable experiences.",
+    '',
+    'What to Expect',
+    '',
+    '🎤 Alumni Talk',
+    'Hear stories, experiences, and advice from alumni and seniors.',
+    '',
+    '🎮 Fun & Games',
+    'Break the ice, meet your batchmates, and take part in exciting activities.',
+    '',
+    '🎸 Jamming Session',
+    'Unwind, enjoy the music, and share the vibe with everyone.',
+    '',
+    "Your registration is complete. All that's left is to show up, bring your energy, and enjoy the experience!",
+    '',
+    'Event: ElevateX',
+    'Program: Freshers / Ice-Breaking Program',
+    'Registration Status: Verified ✅',
+    '',
+    'We look forward to welcoming you to ElevateX and making your first college memories even more special.',
+    '',
+    'See you there! 🚀',
+    '',
+    'FISAT Horizon Club',
+    'ElevateX Team',
   ].join('\n');
 
   const sent = await sendEmail({
     to: recipients,
     subject,
     text,
-    html: `<p>Congratulations! Your registration for <strong>${registration.name}</strong> has been verified.</p><p>Registration ID: <strong>${registration.registrationId}</strong></p><p>Amount: <strong>₹${registration.totalRegistrationFee}</strong></p>`,
+    html: `
+      <p>Hello ${registration.name},</p>
+      <p>We're happy to let you know that your registration for <strong>ElevateX — the Freshers Program</strong> has been successfully verified! 🎉</p>
+      <p>Your registration is now confirmed, and we're excited to have you join us for a day filled with fun, interaction, new connections, and memorable experiences.</p>
+      <p><strong>What to Expect</strong></p>
+      <p>🎤 <strong>Alumni Talk</strong><br />Hear stories, experiences, and advice from alumni and seniors.</p>
+      <p>🎮 <strong>Fun &amp; Games</strong><br />Break the ice, meet your batchmates, and take part in exciting activities.</p>
+      <p>🎸 <strong>Jamming Session</strong><br />Unwind, enjoy the music, and share the vibe with everyone.</p>
+      <p>Your registration is complete. All that's left is to show up, bring your energy, and enjoy the experience!</p>
+      <p>
+        Event: <strong>ElevateX</strong><br />
+        Program: <strong>Freshers / Ice-Breaking Program</strong><br />
+        Registration Status: <strong>Verified ✅</strong>
+      </p>
+      <p>We look forward to welcoming you to ElevateX and making your first college memories even more special.</p>
+      <p>See you there! 🚀</p>
+      <p>FISAT Horizon Club<br />ElevateX Team</p>
+    `,
   });
 
   return sent;
@@ -102,18 +144,48 @@ const sendRejectionEmail = async (registration) => {
   const attachment = buildAttachment(registration);
 
   const text = [
-    `Participant: ${registration.name}`,
-    `Registration ID: ${registration.registrationId}`,
-    `Expected amount: ₹${registration.totalRegistrationFee}`,
-    `Rejection reason: ${registration.rejectionReason || 'Not provided'}`,
-    'The payment screenshot you uploaded is attached for reference.',
+    `Hello ${registration.name},`,
+    '',
+    'Thank you for registering for ElevateX — the Freshers Program.',
+    '',
+    'During verification, we found an issue with the data/payment details you submitted, and unfortunately your registration could not be confirmed at this time.',
+    '',
+    'Reason for Rejection',
+    `${registration.rejectionReason || 'Not provided'}`,
+    '',
+    'Your uploaded payment screenshot is attached to this email for your reference.',
+    '',
+    "If you'd like to resolve this and complete your registration, please get in touch with us as soon as possible.",
+    '',
+    'Event: ElevateX',
+    'Program: Freshers / Ice-Breaking Program',
+    'Registration Status: Rejected ❌',
+    '',
+    'We hope to get this sorted out with you soon so you can join us at ElevateX!',
+    '',
+    'FISAT Horizon Club',
+    'ElevateX Team',
   ].join('\n');
 
   const sent = await sendEmail({
     to: recipients,
     subject,
     text,
-    html: `<p>Your registration for <strong>${registration.name}</strong> was rejected.</p><p>Reason: <strong>${registration.rejectionReason || 'Not provided'}</strong></p><p>Expected amount: <strong>₹${registration.totalRegistrationFee}</strong></p>`,
+    html: `
+      <p>Hello ${registration.name},</p>
+      <p>Thank you for registering for <strong>ElevateX — the Freshers Program</strong>.</p>
+      <p>During verification, we found an issue with the data/payment details you submitted, and unfortunately your registration could not be confirmed at this time.</p>
+      <p><strong>Reason for Rejection</strong><br />${registration.rejectionReason || 'Not provided'}</p>
+      <p>Your uploaded payment screenshot is attached to this email for your reference.</p>
+      <p>If you'd like to resolve this and complete your registration, please get in touch with us as soon as possible.</p>
+      <p>
+        Event: <strong>ElevateX</strong><br />
+        Program: <strong>Freshers / Ice-Breaking Program</strong><br />
+        Registration Status: <strong>Rejected ❌</strong>
+      </p>
+      <p>We hope to get this sorted out with you soon so you can join us at ElevateX!</p>
+      <p>FISAT Horizon Club<br />ElevateX Team</p>
+    `,
     attachments: attachment ? [attachment] : undefined,
   });
 
