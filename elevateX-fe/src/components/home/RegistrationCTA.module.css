@@ -1,0 +1,138 @@
+.section {
+  position: relative;
+  padding: var(--space-12) var(--space-6);
+  overflow: hidden;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgb(212 240 0 / 6%) 0%, transparent 40%, rgb(212 240 0 / 4%) 100%);
+}
+
+.orb {
+  position: absolute;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 50%;
+  background: var(--color-brand-yellow);
+  filter: blur(4rem);
+  opacity: 0.1;
+}
+
+.orbTop {
+  top: -8rem;
+  left: -8rem;
+}
+
+.orbBottom {
+  right: -8rem;
+  bottom: -8rem;
+}
+
+.inner {
+  position: relative;
+  z-index: 10;
+}
+
+.card {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: var(--space-10);
+  border: 1px solid rgb(212 240 0 / 25%);
+  text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  padding: 6px var(--space-4);
+  border: 1px solid rgb(212 240 0 / 30%);
+  border-radius: var(--radius-pill);
+  color: var(--color-brand-yellow);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-brand-yellow);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.heading {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-primary);
+}
+
+.accent {
+  color: var(--color-brand-yellow);
+}
+
+.copy {
+  max-width: 36rem;
+  margin: 0 auto var(--space-8);
+  color: var(--color-text-muted);
+  line-height: var(--text-body-line-height);
+}
+
+.perks {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-10);
+  padding: 0;
+  list-style: none;
+}
+
+.perk {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.perkIcon {
+  color: var(--color-brand-yellow);
+}
+
+.buttonNote {
+  margin-top: var(--space-4);
+  color: rgb(136 136 136 / 60%);
+  font-size: 0.75rem;
+}
+
+.ctaButton {
+  padding-inline: var(--space-10);
+  font-size: 1.125rem;
+}
+
+@keyframes pulse {
+  50% { opacity: 0.45; }
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: var(--space-16);
+  }
+}
+
+@media (max-width: 639px) {
+  .section {
+    padding-inline: var(--space-4);
+  }
+
+  .perks {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-inline: auto;
+    width: fit-content;
+  }
+}

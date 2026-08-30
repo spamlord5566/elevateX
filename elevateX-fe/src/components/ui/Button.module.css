@@ -1,0 +1,111 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  font-weight: 600;
+  line-height: 1.2;
+  user-select: none;
+  cursor: pointer;
+  transition: background 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-brand-yellow);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sm {
+  gap: 6px;
+  padding: 8px var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+}
+
+.md {
+  gap: var(--space-2);
+  padding: 12px var(--space-6);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+}
+
+.lg {
+  gap: 10px;
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-lg);
+  font-size: 1.125rem;
+}
+
+.primary {
+  border-color: var(--color-brand-yellow);
+  background: var(--color-brand-yellow);
+  color: var(--color-brand-black);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-yellow);
+}
+
+.primary:hover {
+  background: var(--color-brand-yellow-dark);
+}
+
+.secondary {
+  border-color: var(--color-glass-border);
+  background: var(--color-surface-2);
+  color: var(--color-text-primary);
+}
+
+.secondary:hover {
+  border-color: var(--color-brand-yellow);
+  color: var(--color-brand-yellow);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-text-primary);
+}
+
+.ghost:hover {
+  background: var(--color-glass);
+  color: var(--color-brand-yellow);
+}
+
+.outline {
+  border-color: var(--color-brand-yellow);
+  background: transparent;
+  color: var(--color-brand-yellow);
+  box-shadow: var(--shadow-yellow);
+}
+
+.outline:hover {
+  background: var(--color-brand-yellow);
+  color: var(--color-brand-black);
+}
+
+.loading {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.ctaLarge {
+  padding-inline: var(--space-10);
+  font-size: 1.125rem;
+}

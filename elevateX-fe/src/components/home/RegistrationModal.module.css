@@ -1,0 +1,323 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgb(0 0 0 / 75%);
+  backdrop-filter: blur(8px);
+}
+
+.dialog {
+  position: relative;
+  width: min(100%, 32rem);
+  max-height: 90dvh;
+  padding: var(--space-6);
+  border: 1px solid rgb(212 240 0 / 25%);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-1);
+  box-shadow: var(--shadow-card);
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: var(--text-heading-line-height);
+}
+
+.stepLabel {
+  margin-top: 2px;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.iconButton,
+.removeButton {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.iconButton {
+  padding: var(--space-2);
+  background: transparent;
+}
+
+.iconButton:hover,
+.removeButton:hover {
+  color: var(--color-brand-yellow);
+  background: var(--color-glass);
+}
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: var(--space-8);
+}
+
+.stepItem {
+  display: flex;
+  align-items: flex-start;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 2rem;
+}
+
+.stepCircle {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-surface-3);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: background 300ms ease, color 300ms ease, box-shadow 300ms ease;
+}
+
+.stepCircleActive,
+.stepCircleComplete {
+  background: var(--color-brand-yellow);
+  color: var(--color-brand-black);
+}
+
+.stepCircleActive {
+  box-shadow: 0 0 0 4px rgb(212 240 0 / 30%);
+}
+
+.stepName {
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.stepNameActive {
+  color: var(--color-brand-yellow);
+}
+
+.connector {
+  width: clamp(2rem, 8vw, 4rem);
+  height: 1px;
+  margin: 16px var(--space-2) 0;
+  background: var(--color-surface-3);
+  transition: background 300ms ease;
+}
+
+.connectorComplete {
+  background: var(--color-brand-yellow);
+}
+
+.stepContent {
+  min-width: 0;
+}
+
+.formStep,
+.reviewStep {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.trackField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.select {
+  width: 100%;
+  padding: 12px var(--space-4);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  outline: 0;
+  background: var(--color-surface-2);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 0.875rem;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.select:hover {
+  border-color: rgb(212 240 0 / 50%);
+}
+
+.select:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--color-brand-yellow);
+}
+
+.selectError {
+  border-color: #ef4444;
+}
+
+.error {
+  color: #f87171;
+  font-size: 0.75rem;
+}
+
+.helper {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  line-height: var(--text-body-line-height);
+}
+
+.memberCard,
+.reviewCard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-glass);
+}
+
+.memberCard {
+  gap: var(--space-5);
+  padding: var(--space-5);
+}
+
+.memberHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.memberLabel {
+  color: var(--color-brand-yellow);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.removeButton {
+  padding: 6px;
+  background: transparent;
+}
+
+.addMember {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px;
+  border: 1px dashed var(--color-glass-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+
+.addMember:hover {
+  border-color: rgb(212 240 0 / 50%);
+  color: var(--color-brand-yellow);
+}
+
+.reviewCard {
+  gap: var(--space-4);
+  padding: var(--space-6);
+}
+
+.reviewRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.reviewLabel {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reviewValue,
+.memberValue {
+  overflow-wrap: anywhere;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.membersList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.consent {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+@media (min-width: 640px) {
+  .dialog {
+    padding: var(--space-8);
+  }
+
+  .stepName {
+    display: block;
+  }
+}
+
+@media (max-width: 420px) {
+  .dialog {
+    padding: var(--space-5);
+  }
+
+  .stepName {
+    display: none;
+  }
+
+  .connector {
+    width: clamp(1.25rem, 10vw, 2.5rem);
+  }
+}

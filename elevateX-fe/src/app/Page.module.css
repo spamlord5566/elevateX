@@ -1,0 +1,19 @@
+.main {
+  position: relative;
+  min-height: 100dvh;
+}
+
+.divider {
+  padding-block: var(--space-2);
+}
+
+.dividerLine {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(212 240 0 / 20%), transparent);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-10);
+}
